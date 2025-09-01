@@ -1,3 +1,9 @@
-from django.shortcuts import render
+from rest_framework.viewsets import ModelViewSet
 
-# Create your views here.
+from apps.materials.models import Material
+from apps.materials.serializers import MaterialSerializer
+
+
+class MaterialViewSet(ModelViewSet):
+    serializer_class = MaterialSerializer
+    queryset = Material.objects.all()

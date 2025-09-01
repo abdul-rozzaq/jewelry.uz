@@ -10,7 +10,7 @@ class Material(BaseModel):
         ("ct", "Carat"),
     ]
 
-    name = models.CharField(max_length=100)  # oltin, kumush, uzuk
+    name = models.CharField(max_length=100)
     unit = models.CharField(max_length=10, choices=UNIT_CHOICES)
 
     def __str__(self):

@@ -19,6 +19,9 @@ schema_view = get_schema_view(
 api_urls = [
     path("auth/", include("apps.users.urls")),
     path("organizations/", include("apps.organizations.urls")),
+    path("transactions/", include("apps.transactions.urls")),
+    path("inventory/", include("apps.inventory.urls")),
+    path("materials/", include("apps.materials.urls")),
 ]
 
 urlpatterns = [

@@ -1,9 +1,9 @@
 from rest_framework.routers import DefaultRouter
 
-from apps.materials.views import MaterialViewSet
+from .views import InventoryViewset
 
 router = DefaultRouter()
-router.register(r"", MaterialViewSet)
+router.register(r"", InventoryViewset)
 
 
 urlpatterns = router.urls + []
