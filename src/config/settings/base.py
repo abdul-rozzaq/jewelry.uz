@@ -10,8 +10,6 @@ env.read_env(BASE_DIR.parent / ".env")
 
 SECRET_KEY = env.str("SECRET_KEY")
 
-DEBUG = True
-
 ALLOWED_HOSTS = env.str("ALLOWED_HOSTS").split(",")
 CORS_ALLOWED_ORIGINS = env.str("CORS_ALLOWED_ORIGINS").split(",")
 
@@ -121,10 +119,8 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
-if DEBUG:
-    STATICFILES_DIRS = [BASE_DIR.parent / "static"]
-else:
-    STATIC_ROOT = BASE_DIR.parent / "static"
+STATICFILES_DIRS = [BASE_DIR.parent / "static"]
+STATIC_ROOT = BASE_DIR.parent / "staticfiles"
 
 MEDIA_ROOT = BASE_DIR.parent / "media"
 
