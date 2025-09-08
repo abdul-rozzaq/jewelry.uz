@@ -10,8 +10,5 @@ class OrganizationInventory(BaseModel):
     material = models.ForeignKey(Material, on_delete=models.CASCADE)
     quantity = models.DecimalField(max_digits=15, decimal_places=3, default=0)
 
-    class Meta:
-        unique_together = ("organization", "material")
-
     def __str__(self):
         return f"{self.organization.name} - {self.material.name}: {self.quantity}"
