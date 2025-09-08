@@ -3,6 +3,7 @@ from pathlib import Path
 
 from environs import Env
 
+from corsheaders.defaults import default_headers
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -12,8 +13,11 @@ env.read_env(BASE_DIR.parent / ".env")
 SECRET_KEY = env.str("SECRET_KEY")
 
 ALLOWED_HOSTS = env.str("ALLOWED_HOSTS").split(",")
-CORS_ALLOWED_ORIGINS = env.str("CORS_ALLOWED_ORIGINS").split(",")
+# CORS_ALLOWED_ORIGINS = env.str("CORS_ALLOWED_ORIGINS").split(",")
 
+CORS_ALLOW_HEADERS = list(default_headers) + ["ngrok-skip-browser-warning"]
+
+CORS_ALLOW_ALL_ORIGINS = True
 
 DJANGO_APPS = [
     "django.contrib.admin",
@@ -90,6 +94,33 @@ DATABASES = {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR.parent / "db.sqlite3",
     }
+}
+
+SWAGGER_SETTINGS = {
+    "SECURITY_DEFINITIONS": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": "JWT or Token authentication. Format: Bearer <token> or Token <token>",
+        },
+        "Basic": {
+            "type": "basic",
+            "description": "Basic authentication. Use username and password.",
+        },
+    },
+    "JSON_EDITOR": True,
+    "DEFAULT_MODEL_RENDERING": "example",
+    "DOC_EXPANSION": "none",
+    "OPERATIONS_SORTER": "alpha",
+    "SHOW_REQUEST_HEADERS": True,
+    "VALIDATOR_URL": None,
+}
+
+REDOC_SETTINGS = {
+    "LAZY_RENDERING": True,
+    "NATIVE_SCROLLBARS": True,
+    "PATH_IN_MIDDLEWARE": True,
 }
 
 

@@ -1,9 +1,8 @@
-from django.contrib.auth import get_user_model
-
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import permissions, viewsets
 
-from drf_yasg.utils import swagger_auto_schema
+
+from apps.users.models import User
 
 from .permissions import IsAdminOrSelf
 from .serializers import MyTokenObtainPairSerializer, UserSerializer
@@ -12,9 +11,6 @@ from .serializers import MyTokenObtainPairSerializer, UserSerializer
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
     permission_classes = (permissions.AllowAny,)
-
-
-User = get_user_model()
 
 
 class UserViewSet(viewsets.ModelViewSet):

@@ -2,14 +2,15 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
-class User(AbstractUser):
-    ROLE_CHOICES = [
-        ("admin", "Admin"),
-        ("bank_operator", "Bank Operator"),
-        ("atolye_operator", "Atolye Operator"),
-    ]
+class UserRoles(models.TextChoices):
+    ADMIN = "admin", "Admin"
+    BANK_OPERATOR = "bank_operator", "Bank Operator"
+    ATOLYE_OPERATOR = "atolye_operator", "Atolye Operator"
 
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default="atolye_operator")
+
+class User(AbstractUser):
+
+    role = models.CharField(max_length=20, choices=UserRoles.choices, default=UserRoles.ATOLYE_OPERATOR)
 
     organization = models.ForeignKey(
         "organizations.Organization",

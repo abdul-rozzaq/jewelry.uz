@@ -5,6 +5,9 @@ from .models import Transaction, TransactionItem
 
 class TransactionItemInline(admin.TabularInline):
     model = TransactionItem
+    fields = ["inventory", "quantity"]
+    readonly_fields = ["inventory"]
+
     extra = 1
 
 
@@ -16,9 +19,6 @@ class TransactionAdmin(admin.ModelAdmin):
         "receiver",
         "status",
         "created_at",
-        "confirmed_by_sender",
-        "confirmed_by_receiver",
     ]
-
-
+    list_editable = ["sender", "receiver", "status"]
     inlines = [TransactionItemInline]
