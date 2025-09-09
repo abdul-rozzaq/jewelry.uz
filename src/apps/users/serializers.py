@@ -11,15 +11,15 @@ User = get_user_model()
 class BaseUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("id", "username", "email", "first_name", "last_name", "is_active", "is_staff", "organization")
-        read_only_fields = ("id", "is_active", "is_staff")
+        fields = ("id", "username", "email", "first_name", "last_name", "organization")
+        read_only_fields = ("id",)
 
 
 class GetUserSerializer(BaseUserSerializer):
     organization = OrganizationSerializer(read_only=True)
 
 
-class UserSerializer(BaseUserSerializer):
+class CreateUpdateUserSerializer(BaseUserSerializer):
     password = serializers.CharField(write_only=True, required=True)
 
     class Meta(BaseUserSerializer.Meta):
