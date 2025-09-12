@@ -1,7 +1,9 @@
 from rest_framework import serializers
 
+from apps.inventory.models import OrganizationInventory
 from apps.organizations.serializers import OrganizationSerializer
 from apps.processes.models import ProcessInput, ProcessOutput, Process
+from apps.users.models import User
 
 
 class ProcessInputGetSerializer(serializers.ModelSerializer):
@@ -30,20 +32,39 @@ class GetProcessSerializer(serializers.ModelSerializer):
 
 
 class ProcessInputCreateSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = ProcessInput
         fields = ["inventory", "quantity"]
 
+    def validate_inventory(self, inventory: OrganizationInventory):
+        user: User = self.context["request"].user
+
+        if user.organization != inventory.organization:
+            raise serializers.ValidationError({"detail": "Siz bu mahsulotdan foydalana olmaysiz"})
+
+        return inventory
+
+    def validate(self, attrs):
+        inventory: OrganizationInventory = attrs["inventory"]
+        quantity = attrs["quantity"]
+
+        if inventory.quantity < quantity:
+            raise serializers.ValidationError({"detail": "Mahsulot yetarli emas"})
+
+        return attrs
+
 
 class ProcessOutputCreateSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = ProcessOutput
         fields = ["material", "quantity"]
 
 
 class CreateProcessSerializer(serializers.ModelSerializer):
-    inputs = ProcessInputCreateSerializer(many=True, required=False)
-    outputs = ProcessOutputCreateSerializer(many=True, required=False)
+    inputs = ProcessInputCreateSerializer(many=True, required=True, allow_empty=False)
+    outputs = ProcessOutputCreateSerializer(many=True, required=True, allow_empty=False)
 
     class Meta:
         model = Process
@@ -57,17 +78,17 @@ class CreateProcessSerializer(serializers.ModelSerializer):
             "outputs",
         ]
 
+        read_only_fields = ["id", "created_at", "updated_at", "organization"]
+
     def create(self, validated_data):
         inputs_data = validated_data.pop("inputs", [])
         outputs_data = validated_data.pop("outputs", [])
 
         process = Process.objects.create(**validated_data)
 
-        # ProcessInput yaratish
         for input_data in inputs_data:
             ProcessInput.objects.create(process=process, **input_data)
 
-        # ProcessOutput yaratish
         for output_data in outputs_data:
             ProcessOutput.objects.create(process=process, **output_data)
 

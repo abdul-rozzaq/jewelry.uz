@@ -1,17 +1,19 @@
 from django.urls import path
-from rest_framework.routers import DefaultRouter
 
-from .views import ProcessCreateApiView, ProcessListApiView
-
-# from apps.processes.views import ProcessViewSet
-
-
-router = DefaultRouter()
-
-# router.register("", ProcessViewSet)
+from .views.process import ProcessCompleteApiView, ProcessCreateApiView, ProcessListApiView
+from .views.process_output import ProcessOutputUpdateDeleteApiView
+from .views.process_input import ProcessInputUpdateDeleteApiView
 
 
-urlpatterns = router.urls + [
+urlpatterns = [
+    # ProcessOutput
+    path("output/<int:pk>/", ProcessOutputUpdateDeleteApiView.as_view(), name="process-output-update-delete"),
+    
+    # ProcessInput
+    path("input/<int:pk>/", ProcessInputUpdateDeleteApiView.as_view(), name="process-output-update-delete"),
+
+    # Process
     path("list/", ProcessListApiView.as_view(), name="process-list"),
     path("create/", ProcessCreateApiView.as_view(), name="process-create"),
+    path("<int:pk>/complete/", ProcessCompleteApiView.as_view(), name="process-complete"),
 ]

@@ -7,15 +7,15 @@ from apps.materials.models import Material
 
 
 class ProcessStatus(models.TextChoices):
-    in_process = "in process", "In process"
-    completed = "completed", "Completed"
+    IN_PROCESS = "in process", "In process"
+    COMPLETED = "completed", "Completed"
 
 
 class Process(BaseModel):
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     process_type = models.CharField(max_length=128, null=True, blank=True)
 
-    status = models.CharField(max_length=64, choices=ProcessStatus.choices, default=ProcessStatus.completed)
+    status = models.CharField(max_length=64, choices=ProcessStatus.choices, default=ProcessStatus.IN_PROCESS)
 
     started_at = models.DateTimeField(auto_now_add=True)
     finished_at = models.DateTimeField(null=True, blank=True)
