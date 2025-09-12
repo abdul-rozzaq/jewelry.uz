@@ -1,3 +1,5 @@
+from django.urls import reverse_lazy
+
 from datetime import timedelta
 from pathlib import Path
 
@@ -116,6 +118,7 @@ SWAGGER_SETTINGS = {
     "OPERATIONS_SORTER": "alpha",
     "SHOW_REQUEST_HEADERS": True,
     "VALIDATOR_URL": None,
+    "LOGIN_URL": reverse_lazy("rest_framework:login"),
 }
 
 REDOC_SETTINGS = {

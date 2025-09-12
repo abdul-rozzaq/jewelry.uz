@@ -15,6 +15,9 @@ class InventoryViewset(viewsets.ModelViewSet):
     def get_queryset(self):
         user: User = self.request.user
 
+        if not user.is_authenticated:
+            return self.queryset
+
         if user.role == UserRoles.ADMIN:
             return OrganizationInventory.objects.all()
 

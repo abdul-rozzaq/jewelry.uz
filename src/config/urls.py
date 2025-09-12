@@ -22,6 +22,7 @@ api_urls = [
     path("transactions/", include("apps.transactions.urls")),
     path("inventory/", include("apps.inventory.urls")),
     path("materials/", include("apps.materials.urls")),
+    path("processes/", include("apps.processes.urls")),
 ]
 
 urlpatterns = [
@@ -29,4 +30,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
     path("api/v1/", include(api_urls)),
+    path("drf-auth/", include("rest_framework.urls"))
 ]

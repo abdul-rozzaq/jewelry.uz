@@ -1,13 +1,21 @@
 from django.db import models
 
 from apps.common.models import BaseModel
+from apps.inventory.models import OrganizationInventory
 from apps.organizations.models import Organization
 from apps.materials.models import Material
+
+
+class ProcessStatus(models.TextChoices):
+    in_process = "in process", "In process"
+    completed = "completed", "Completed"
 
 
 class Process(BaseModel):
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     process_type = models.CharField(max_length=128, null=True, blank=True)
+
+    status = models.CharField(max_length=64, choices=ProcessStatus.choices, default=ProcessStatus.completed)
 
     started_at = models.DateTimeField(auto_now_add=True)
     finished_at = models.DateTimeField(null=True, blank=True)
@@ -22,11 +30,11 @@ class Process(BaseModel):
 
 class ProcessInput(models.Model):
     process = models.ForeignKey(Process, related_name="inputs", on_delete=models.CASCADE)
-    material = models.ForeignKey(Material, on_delete=models.CASCADE)
+    inventory = models.ForeignKey(OrganizationInventory, on_delete=models.CASCADE)
     quantity = models.DecimalField(max_digits=15, decimal_places=3)
 
     def __str__(self):
-        return f"Input {self.material.name} - {self.quantity}"
+        return f"Input {self.inventory.material.name} - {self.quantity}"
 
 
 class ProcessOutput(models.Model):
