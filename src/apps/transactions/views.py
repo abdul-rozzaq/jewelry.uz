@@ -1,10 +1,10 @@
 from django.db.models import Q
 
+from drf_yasg.utils import swagger_auto_schema
+
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView, GenericAPIView
 from rest_framework import permissions, serializers
 from rest_framework.response import Response
-
-from drf_yasg.utils import swagger_auto_schema
 
 from apps.transactions.permissions import CanAcceptTransaction
 from apps.transactions.services import TransactionService
@@ -20,12 +20,18 @@ class TransactionListView(ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        user: User = self.request.user
+        request = self.request
+        user: User = request.user
 
-        if user.role == UserRoles.ADMIN:
-            return Transaction.objects.all()
+        if not user.is_authenticated:
+            return self.queryset
 
-        return Transaction.objects.filter(Q(sender=user.organization) | Q(receiver=user.organization))
+        queryset = Transaction.objects.all().order_by("-id")
+
+        if user.role != UserRoles.ADMIN:
+            return queryset.filter(Q(sender=user.organization) | Q(receiver=user.organization))
+
+        return queryset
 
 
 class TransactionCreateView(CreateAPIView):

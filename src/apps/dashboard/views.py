@@ -12,7 +12,7 @@ from apps.transactions.models import Transaction
 
 
 class DashboardStatisticsAPIView(ListAPIView):
-    serializer_class = DashboardStatsSerializer()
+    serializer_class = DashboardStatsSerializer
 
     def get(self, request, *args, **kwargs):
         today = now().date()
