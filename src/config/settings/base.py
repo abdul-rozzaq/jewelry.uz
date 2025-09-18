@@ -37,6 +37,7 @@ LOCAL_APPS = [
     "apps.inventory",
     "apps.transactions",
     "apps.users",
+    "apps.dashboard",
 ]
 
 EXTERNAL_APPS = [
