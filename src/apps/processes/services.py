@@ -13,12 +13,13 @@ class ProcessService:
         with transaction.atomic():
             for inp in process.inputs.all():
                 inp: ProcessInput
+                inventory = inp.inventory
 
                 if inp.inventory.quantity < inp.quantity:
                     raise exceptions.ValidationError({"detail": "Mahsulot yetarli emas"})
 
-                inp.inventory.quantity -= inp.quantity
-                inp.save(update_fields=["quantity"])
+                inventory.quantity -= inp.quantity
+                inventory.save(update_fields=["quantity"])
 
             for outp in process.outputs.all():
                 outp: ProcessOutput
