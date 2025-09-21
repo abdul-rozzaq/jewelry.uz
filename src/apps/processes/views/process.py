@@ -15,13 +15,15 @@ class ProcessListApiView(ListAPIView):
     def get_queryset(self):
         user: User = self.request.user
 
+        qs = Process.objects.all().order_by("-id")
+
         if not user.is_authenticated:
             return self.queryset
 
         if user.role == UserRoles.ADMIN:
-            return Process.objects.all()
+            return qs
 
-        return Process.objects.filter(organization=user.organization)
+        return qs.filter(organization=user.organization)
 
 
 class ProcessCreateApiView(CreateAPIView):
