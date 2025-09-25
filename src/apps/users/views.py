@@ -1,6 +1,8 @@
 from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework import permissions, viewsets
 
+from rest_framework import permissions, viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 from apps.users.models import User
 
@@ -31,3 +33,10 @@ class UserViewSet(viewsets.ModelViewSet):
             return GetUserSerializer
 
         return super().get_serializer_class(*args, **kwargs)
+
+    @action(["GET"], detail=False, url_path="me")
+    def get_me(self, request, *args, **kwargs):
+        user = request.user
+        serializer = self.get_serializer(instance=user)
+
+        return Response(serializer.data)
