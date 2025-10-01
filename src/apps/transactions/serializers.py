@@ -3,7 +3,7 @@ from django.db import transaction
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from apps.inventory.serializers import InventorySerializer
+from apps.products.serializers import ProductSerializer
 from apps.organizations.serializers import OrganizationSerializer
 
 
@@ -11,7 +11,7 @@ from .models import Transaction, TransactionItem
 
 
 class TransactionItemSerializer(serializers.ModelSerializer):
-    inventory = InventorySerializer()
+    product = ProductSerializer()
 
     class Meta:
         model = TransactionItem
@@ -33,7 +33,7 @@ class CreateTransactionItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TransactionItem
-        fields = ["inventory", "quantity"]
+        fields = ["product", "quantity"]
 
 
 class CreateTransactionSerializer(serializers.ModelSerializer):
@@ -55,11 +55,8 @@ class CreateTransactionSerializer(serializers.ModelSerializer):
 
         for item in items:
 
-            # if item["inventory"].organization != sender:
-            #     raise ValidationError({"detail": f"{item['inventory']} bu {sender} ga tegishli emas"})
-
-            if item["inventory"].quantity < item["quantity"]:
-                raise ValidationError({"detail": f"{item['inventory'].material.name} uchun yetarli miqdor yo'q. Mavjud: {item.inventory.quantity}, so'ralgan {item.quantity}"})
+            if item["product"].quantity < item["quantity"]:
+                raise ValidationError({"detail": f"{item['product'].material.name} uchun yetarli miqdor yo'q. Mavjud: {item.product.quantity}, so'ralgan {item.quantity}"})
 
         with transaction.atomic():
             transaction_obj = super().create(validated_data)

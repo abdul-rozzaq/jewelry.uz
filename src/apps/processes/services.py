@@ -1,7 +1,7 @@
 from django.db import transaction
 from rest_framework import exceptions
 
-from apps.inventory.models import OrganizationInventory
+from apps.products.models import Product
 
 from .models import Process, ProcessInput, ProcessOutput, ProcessStatus
 
@@ -13,21 +13,21 @@ class ProcessService:
         with transaction.atomic():
             for inp in process.inputs.all():
                 inp: ProcessInput
-                inventory = inp.inventory
+                product = inp.product
 
-                if inp.inventory.quantity < inp.quantity:
+                if inp.product.quantity < inp.quantity:
                     raise exceptions.ValidationError({"detail": "Mahsulot yetarli emas"})
 
-                inventory.quantity -= inp.quantity
-                inventory.save(update_fields=["quantity"])
+                product.quantity -= inp.quantity
+                product.save(update_fields=["quantity"])
 
             for outp in process.outputs.all():
                 outp: ProcessOutput
 
-                inventory, created = OrganizationInventory.objects.get_or_create(organization=process.organization, material=outp.material, defaults={"quantity": 0})
-                inventory.quantity += outp.quantity
+                product, created = Product.objects.get_or_create(organization=process.organization, material=outp.material, defaults={"quantity": 0})
+                product.quantity += outp.quantity
 
-                inventory.save(update_fields=["quantity"])
+                product.save(update_fields=["quantity"])
 
             process.status = ProcessStatus.COMPLETED
             process.save(update_fields=["status"])

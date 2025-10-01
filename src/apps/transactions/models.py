@@ -1,6 +1,6 @@
 from django.db import models
 from apps.common.models import BaseModel
-from apps.inventory.models import OrganizationInventory
+from apps.products.models import Product
 from apps.organizations.models import Organization
 
 
@@ -22,8 +22,8 @@ class Transaction(BaseModel):
 
 class TransactionItem(models.Model):
     transaction = models.ForeignKey(Transaction, related_name="items", on_delete=models.CASCADE)
-    inventory = models.ForeignKey(OrganizationInventory, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.DecimalField(max_digits=15, decimal_places=3)
 
     def __str__(self):
-        return f"{self.inventory.material.name} - {self.quantity}"
+        return f"{self.product.material.name} - {self.quantity}"

@@ -5,8 +5,8 @@ from .models import Transaction, TransactionItem
 
 class TransactionItemInline(admin.TabularInline):
     model = TransactionItem
-    fields = ["inventory", "quantity"]
-    readonly_fields = ["inventory"]
+    fields = ["product", "quantity"]
+    readonly_fields = ["product"]
 
     extra = 1
 

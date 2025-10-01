@@ -5,7 +5,7 @@ from apps.materials.models import Material
 from apps.organizations.models import Organization
 
 
-class OrganizationInventory(BaseModel):
+class Product(BaseModel):
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
     material = models.ForeignKey(Material, on_delete=models.CASCADE)
     quantity = models.DecimalField(max_digits=15, decimal_places=3, default=0)

@@ -1,0 +1,182 @@
+[
+    {
+        "model": "materials.material",
+        "fields": {
+            "created_at": "2025-09-24T05:49:43.569Z",
+            "updated_at": "2025-09-24T05:49:43.569Z",
+            "name": "HAS ALTIN",
+            "unit": "g"
+        }
+    },
+    {
+        "model": "materials.material",
+        "fields": {
+            "created_at": "2025-09-24T05:50:13.231Z",
+            "updated_at": "2025-09-24T05:50:13.231Z",
+            "name": "DEMIRLI ALTIN",
+            "unit": "g"
+        }
+    },
+    {
+        "model": "materials.material",
+        "fields": {
+            "created_at": "2025-09-24T05:54:09.201Z",
+            "updated_at": "2025-09-24T05:54:09.201Z",
+            "name": "585",
+            "unit": "g"
+        }
+    },
+    {
+        "model": "materials.material",
+        "fields": {
+            "created_at": "2025-09-24T06:12:10.847Z",
+            "updated_at": "2025-09-24T06:12:10.847Z",
+            "name": "KAYNAK",
+            "unit": "g"
+        }
+    },
+    {
+        "model": "materials.material",
+        "fields": {
+            "created_at": "2025-09-24T06:16:39.145Z",
+            "updated_at": "2025-09-24T10:11:44.042Z",
+            "name": "CILA HURDA",
+            "unit": "g"
+        }
+    },
+    {
+        "model": "materials.material",
+        "fields": {
+            "created_at": "2025-09-24T06:16:54.290Z",
+            "updated_at": "2025-09-24T06:16:54.290Z",
+            "name": "HURDA",
+            "unit": "g"
+        }
+    },
+    {
+        "model": "materials.material",
+        "fields": {
+            "created_at": "2025-09-24T09:33:40.881Z",
+            "updated_at": "2025-09-24T09:35:04.782Z",
+            "name": "DOKUM HURDA",
+            "unit": "g"
+        }
+    },
+    {
+        "model": "materials.material",
+        "fields": {
+            "created_at": "2025-09-24T09:33:54.974Z",
+            "updated_at": "2025-09-24T09:33:54.974Z",
+            "name": "SARNEL HURDA",
+            "unit": "g"
+        }
+    },
+    {
+        "model": "materials.material",
+        "fields": {
+            "created_at": "2025-09-24T09:34:18.803Z",
+            "updated_at": "2025-09-24T10:10:32.261Z",
+            "name": "KAYNAK HURDA",
+            "unit": "g"
+        }
+    },
+    {
+        "model": "materials.material",
+        "fields": {
+            "created_at": "2025-09-24T09:50:18.910Z",
+            "updated_at": "2025-09-24T09:53:47.510Z",
+            "name": "PATLATMA RAMAT",
+            "unit": "g"
+        }
+    },
+    {
+        "model": "materials.material",
+        "fields": {
+            "created_at": "2025-09-24T09:50:38.106Z",
+            "updated_at": "2025-09-24T09:54:27.508Z",
+            "name": "CILA RAMAT",
+            "unit": "g"
+        }
+    },
+    {
+        "model": "materials.material",
+        "fields": {
+            "created_at": "2025-09-24T09:55:45.647Z",
+            "updated_at": "2025-09-24T09:55:45.647Z",
+            "name": "ATOLYE RAMAT",
+            "unit": "g"
+        }
+    },
+    {
+        "model": "materials.material",
+        "fields": {
+            "created_at": "2025-09-24T09:55:56.592Z",
+            "updated_at": "2025-09-24T09:55:56.592Z",
+            "name": "DOKUM RAMAT",
+            "unit": "g"
+        }
+    },
+    {
+        "model": "materials.material",
+        "fields": {
+            "created_at": "2025-09-24T09:56:18.407Z",
+            "updated_at": "2025-09-24T09:56:18.407Z",
+            "name": "SARNEL RAMAT",
+            "unit": "g"
+        }
+    },
+    {
+        "model": "materials.material",
+        "fields": {
+            "created_at": "2025-09-24T10:12:15.754Z",
+            "updated_at": "2025-09-24T10:12:15.754Z",
+            "name": "RAMAT",
+            "unit": "g"
+        }
+    },
+    {
+        "model": "materials.material",
+        "fields": {
+            "created_at": "2025-09-24T10:12:21.968Z",
+            "updated_at": "2025-09-24T10:12:21.968Z",
+            "name": "SARNEL HAS ALTIN - 585 FARKI",
+            "unit": "g"
+        }
+    },
+    {
+        "model": "materials.material",
+        "fields": {
+            "created_at": "2025-09-25T11:25:13.779Z",
+            "updated_at": "2025-09-25T11:25:13.779Z",
+            "name": "Tashli altin",
+            "unit": "g"
+        }
+    },
+    {
+        "model": "materials.material",
+        "fields": {
+            "created_at": "2025-09-25T11:25:14.127Z",
+            "updated_at": "2025-09-25T11:25:14.127Z",
+            "name": "Tashli altin",
+            "unit": "g"
+        }
+    },
+    {
+        "model": "materials.material",
+        "fields": {
+            "created_at": "2025-09-25T11:25:14.399Z",
+            "updated_at": "2025-09-25T11:25:14.399Z",
+            "name": "Tashli altin",
+            "unit": "g"
+        }
+    },
+    {
+        "model": "materials.material",
+        "fields": {
+            "created_at": "2025-09-28T05:49:31.120Z",
+            "updated_at": "2025-09-28T05:49:31.120Z",
+            "name": "Kalit",
+            "unit": "g"
+        }
+    }
+]

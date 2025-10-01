@@ -1,7 +1,7 @@
 from django.db import models
 
 from apps.common.models import BaseModel
-from apps.inventory.models import OrganizationInventory
+from apps.products.models import Product
 from apps.organizations.models import Organization
 from apps.materials.models import Material
 
@@ -30,11 +30,11 @@ class Process(BaseModel):
 
 class ProcessInput(models.Model):
     process = models.ForeignKey(Process, related_name="inputs", on_delete=models.CASCADE)
-    inventory = models.ForeignKey(OrganizationInventory, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.DecimalField(max_digits=15, decimal_places=3)
 
     def __str__(self):
-        return f"Input {self.inventory.material.name} - {self.quantity}"
+        return f"Input {self.product.material.name} - {self.quantity}"
 
 
 class ProcessOutput(models.Model):

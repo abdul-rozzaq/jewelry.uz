@@ -6,7 +6,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 
 from apps.dashboard.serializers import DashboardStatsSerializer
-from apps.inventory.models import OrganizationInventory
+from apps.products.models import Product
 from apps.organizations.models import Organization
 from apps.transactions.models import Transaction
 
@@ -18,9 +18,9 @@ class DashboardStatisticsAPIView(ListAPIView):
         today = now().date()
         # yesterday = today - timedelta(days=1)
 
-        inventories = OrganizationInventory.objects.all()
-        inventories_count = inventories.count()
-        inventories_total = inventories.aggregate(total=Sum("quantity"))["total"]
+        products = Product.objects.all()
+        products_count = products.count()
+        products_total = products.aggregate(total=Sum("quantity"))["total"] or 0
 
         organizations = Organization.objects.all()
         organizations_count = organizations.count()
@@ -28,12 +28,12 @@ class DashboardStatisticsAPIView(ListAPIView):
         transactions = Transaction.objects.filter(created_at__date=today)
 
         transactions_count = transactions.count()
-        transactions_total = transactions.aggregate(total_quantity=Sum("items__quantity"))["total_quantity"]
+        transactions_total = transactions.aggregate(total_quantity=Sum("items__quantity"))["total_quantity"] or 0
 
         response = {
-            "inventory": {
-                "count": inventories_count,
-                "total": inventories_total,
+            "products": {
+                "count": products_count,
+                "total": products_total,
             },
             "organization": {
                 "count": organizations_count,

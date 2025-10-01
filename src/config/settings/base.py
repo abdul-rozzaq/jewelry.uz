@@ -34,7 +34,7 @@ LOCAL_APPS = [
     "apps.materials",
     "apps.organizations",
     "apps.processes",
-    "apps.inventory",
+    "apps.products",
     "apps.transactions",
     "apps.users",
     "apps.dashboard",

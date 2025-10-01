@@ -3,13 +3,13 @@ from rest_framework.response import Response
 from django.db import transaction
 
 from apps.users.models import User, UserRoles
-from .serializers import InventorySerializer
-from .models import OrganizationInventory
+from .serializers import ProductSerializer
+from .models import Product
 
 
-class InventoryViewset(viewsets.ModelViewSet):
-    queryset = OrganizationInventory.objects.none()
-    serializer_class = InventorySerializer
+class ProductsViewset(viewsets.ModelViewSet):
+    queryset = Product.objects.none()
+    serializer_class = ProductSerializer
     filterset_fields = ["organization"]
 
     def get_queryset(self):
@@ -19,29 +19,26 @@ class InventoryViewset(viewsets.ModelViewSet):
             return self.queryset
 
         if user.role == UserRoles.ADMIN:
-            return OrganizationInventory.objects.all()
+            return Product.objects.all()
 
-        return OrganizationInventory.objects.filter(organization=user.organization)
+        return Product.objects.filter(organization=user.organization)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         with transaction.atomic():
-            # Mavjud inventory ni tekshirish
-            existing_inventory = OrganizationInventory.objects.filter(
+            existing_product = Product.objects.filter(
                 organization=serializer.validated_data["organization"],
                 material=serializer.validated_data["material"],
             ).first()
 
-            if existing_inventory:
-                # Agar mavjud bo'lsa quantity'ni qo'shish
-                existing_inventory.quantity += serializer.validated_data["quantity"]
-                existing_inventory.save()
+            if existing_product:
+                existing_product.quantity += serializer.validated_data["quantity"]
+                existing_product.save()
                 return Response(
-                    self.get_serializer(existing_inventory).data,
+                    self.get_serializer(existing_product).data,
                     status=status.HTTP_200_OK,
                 )
 
-            # Agar mavjud bo'lmasa yangi yaratish
             return super().create(request, *args, **kwargs)

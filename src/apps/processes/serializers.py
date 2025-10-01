@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from apps.inventory.models import OrganizationInventory
+from apps.products.models import Product
 from apps.organizations.serializers import OrganizationSerializer
 from apps.processes.models import ProcessInput, ProcessOutput, Process
 from apps.users.models import User
@@ -35,21 +35,21 @@ class ProcessInputCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProcessInput
-        fields = ["inventory", "quantity"]
+        fields = ["product", "quantity"]
 
-    def validate_inventory(self, inventory: OrganizationInventory):
+    def validate_product(self, product: Product):
         user: User = self.context["request"].user
 
-        if user.organization != inventory.organization:
+        if user.organization != product.organization:
             raise serializers.ValidationError({"detail": "Siz bu mahsulotdan foydalana olmaysiz"})
 
-        return inventory
+        return product
 
     def validate(self, attrs):
-        inventory: OrganizationInventory = attrs["inventory"]
+        product: Product = attrs["product"]
         quantity = attrs["quantity"]
 
-        if inventory.quantity < quantity:
+        if product.quantity < quantity:
             raise serializers.ValidationError({"detail": "Mahsulot yetarli emas"})
 
         return attrs

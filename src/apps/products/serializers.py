@@ -5,10 +5,10 @@ from apps.materials.serializers import MaterialSerializer
 from apps.organizations.models import Organization
 from apps.organizations.serializers import OrganizationSerializer
 
-from .models import OrganizationInventory
+from .models import Product
 
 
-class InventorySerializer(serializers.ModelSerializer):
+class ProductSerializer(serializers.ModelSerializer):
     organization_id = serializers.PrimaryKeyRelatedField(queryset=Organization.objects.all(), source="organization", write_only=True)
     material_id = serializers.PrimaryKeyRelatedField(queryset=Material.objects.all(), source="material", write_only=True)
 
@@ -16,7 +16,7 @@ class InventorySerializer(serializers.ModelSerializer):
     material = MaterialSerializer(read_only=True)
 
     class Meta:
-        model = OrganizationInventory
+        model = Product
         fields = (
             "id",
             "organization_id",
