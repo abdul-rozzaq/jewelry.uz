@@ -1,6 +1,7 @@
 from django.urls import path
 
-from .views.process import ProcessCompleteApiView, ProcessCreateApiView, ProcessDestroyApiView, ProcessListApiView
+
+from .views.process import ProcessCompleteApiView, ProcessCreateApiView, ProcessDestroyApiView, ProcessListApiView, ProcessTypeListView
 from .views.process_output import ProcessOutputUpdateDeleteApiView
 from .views.process_input import ProcessInputUpdateDeleteApiView
 
@@ -11,6 +12,9 @@ urlpatterns = [
     
     # ProcessInput
     path("input/<int:pk>/", ProcessInputUpdateDeleteApiView.as_view(), name="process-output-update-delete"),
+
+    # ProcessInput
+    path("types/", ProcessTypeListView.as_view(), name="process-types-list"),
 
     # Process
     path("list/", ProcessListApiView.as_view(), name="process-list"),

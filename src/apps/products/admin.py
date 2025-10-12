@@ -1,9 +1,23 @@
 from django.contrib import admin
-from .models import Product
+from .models import Product, ProductGenealogy
+
+
+class GenealogyInline(admin.TabularInline):
+    model = ProductGenealogy
+    extra = 1
 
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = [field.name for field in Product._meta.fields]
-    search_fields = [field.name for field in Product._meta.fields if field.get_internal_type() in ["CharField", "TextField"]]
-    list_filter = [field.name for field in Product._meta.fields if field.get_internal_type() in ["BooleanField", "DateField", "DateTimeField", "ForeignKey"]]
+    list_display = ["id", "material", "organization", "quantity", "created_at"]
+    search_fields = ["material__name", "organization__name"]
+    list_filter = ["created_at", "material", "organization"]
+
+    inlines = [GenealogyInline]
+
+
+@admin.register(ProductGenealogy)
+class ProductGenealogyAdmin(admin.ModelAdmin):
+    list_display = ["id", "product", "material", "percent"]
+    search_fields = ["product__material__name", "material__name"]
+    list_filter = ["percent"]

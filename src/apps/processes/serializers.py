@@ -1,8 +1,9 @@
 from rest_framework import serializers
 
+from apps.materials.serializers import MaterialSerializer
 from apps.products.models import Product
 from apps.organizations.serializers import OrganizationSerializer
-from apps.processes.models import ProcessInput, ProcessOutput, Process
+from apps.processes.models import ProcessInput, ProcessOutput, Process, ProcessTemplate, ProcessType
 from apps.users.models import User
 
 
@@ -93,3 +94,20 @@ class CreateProcessSerializer(serializers.ModelSerializer):
             ProcessOutput.objects.create(process=process, **output_data)
 
         return process
+
+
+class ProcessTemplateSerializer(serializers.ModelSerializer):
+    inputs = MaterialSerializer(many=True)
+    outputs = MaterialSerializer(many=True)
+
+    class Meta:
+        model = ProcessTemplate
+        fields = "__all__"
+
+
+class ProcessTypeSerializer(serializers.ModelSerializer):
+    template = ProcessTemplateSerializer()
+
+    class Meta:
+        model = ProcessType
+        fields = "__all__"

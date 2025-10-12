@@ -2,9 +2,9 @@ from rest_framework.generics import ListAPIView, CreateAPIView, DestroyAPIView
 from rest_framework.response import Response
 from rest_framework import exceptions
 
-from apps.processes.models import Process, ProcessStatus
+from apps.processes.models import Process, ProcessStatus, ProcessType
 from apps.processes.permissions import CanDeleteProcess
-from apps.processes.serializers import CreateProcessSerializer, GetProcessSerializer
+from apps.processes.serializers import CreateProcessSerializer, GetProcessSerializer, ProcessTypeSerializer
 from apps.processes.services import ProcessService
 from apps.users.models import User, UserRoles
 
@@ -42,10 +42,10 @@ class ProcessCompleteApiView(CreateAPIView):
     def get_queryset(self):
         user = self.request.user
 
-        if not user.is_authenticated:
-            return self.queryset
+        if user.is_authenticated:
+            return Process.objects.filter(organization=user.organization)
 
-        return Process.objects.filter(organization=user.organization)
+        return self.queryset
 
     def post(self, request, *args, **kwargs):
         object: Process = self.get_object()
@@ -63,3 +63,8 @@ class ProcessCompleteApiView(CreateAPIView):
 class ProcessDestroyApiView(DestroyAPIView):
     queryset = Process.objects.all()
     permission_classes = [CanDeleteProcess]
+
+
+class ProcessTypeListView(ListAPIView):
+    queryset = ProcessType.objects.all()
+    serializer_class = ProcessTypeSerializer

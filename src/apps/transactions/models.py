@@ -2,6 +2,7 @@ from django.db import models
 from apps.common.models import BaseModel
 from apps.products.models import Product
 from apps.organizations.models import Organization
+from apps.projects.models import Project
 
 
 class TransactionStatuses(models.TextChoices):
@@ -10,11 +11,12 @@ class TransactionStatuses(models.TextChoices):
 
 
 class Transaction(BaseModel):
-
     sender = models.ForeignKey(Organization, related_name="sent_transactions", on_delete=models.CASCADE)
     receiver = models.ForeignKey(Organization, related_name="received_transactions", on_delete=models.CASCADE)
 
     status = models.CharField(max_length=20, choices=TransactionStatuses.choices, default=TransactionStatuses.PENDING)
+
+    project = models.ForeignKey(Project, related_name="transactions", on_delete=models.CASCADE)
 
     def __str__(self):
         return f"Transaction {self.id}: {self.sender} → {self.receiver}"

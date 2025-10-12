@@ -15,6 +15,6 @@ class ProcessOutputUpdateDeleteApiView(UpdateAPIView, DestroyAPIView):
             return self.queryset
 
         return ProcessOutput.objects.filter(
-            process__organization=user,
             process__status=ProcessStatus.IN_PROCESS,
+            process__organization=user.organization,
         )
