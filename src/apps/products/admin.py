@@ -1,23 +1,15 @@
 from django.contrib import admin
-from .models import Product, ProductGenealogy
-
-
-class GenealogyInline(admin.TabularInline):
-    model = ProductGenealogy
-    extra = 1
+from .models import Product
 
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ["id", "material", "organization", "quantity", "created_at"]
+    list_display = ["id", "material", "project", "organization", "quantity", "purity", "karat", "created_at"]
     search_fields = ["material__name", "organization__name"]
     list_filter = ["created_at", "material", "organization"]
+    list_editable = ["quantity", "project", "purity"]
 
-    inlines = [GenealogyInline]
+    def karat(self, obj):
+        return obj.karat
 
-
-@admin.register(ProductGenealogy)
-class ProductGenealogyAdmin(admin.ModelAdmin):
-    list_display = ["id", "product", "material", "percent"]
-    search_fields = ["product__material__name", "material__name"]
-    list_filter = ["percent"]
+    karat.short_description = "Karat"

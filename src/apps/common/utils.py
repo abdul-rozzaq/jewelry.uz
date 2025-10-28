@@ -22,6 +22,7 @@ def cache_response(timeout=300, key_func=None):
 
             # Agar cache da yo'q bo'lsa, asl funksiyani chaqirish
             response = view_func(self, request, *args, **kwargs)
+
             if response.status_code == 200:
                 cache.set(cache_key, response.data, timeout)
 

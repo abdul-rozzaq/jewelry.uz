@@ -8,3 +8,4 @@ class ProjectAdmin(admin.ModelAdmin):
     list_display = ["id", "name", "is_active", "created_at"]
     search_fields = ["name", "description"]
     list_filter = ["is_active", "created_at"]
+    list_editable = ["name"]

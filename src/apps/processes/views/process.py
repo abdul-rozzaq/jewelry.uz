@@ -1,4 +1,4 @@
-from rest_framework.generics import ListAPIView, CreateAPIView, DestroyAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView, DestroyAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework import exceptions
 
@@ -9,9 +9,8 @@ from apps.processes.services import ProcessService
 from apps.users.models import User, UserRoles
 
 
-class ProcessListApiView(ListAPIView):
+class BaseQuerysetMixin:
     queryset = Process.objects.none()
-    serializer_class = GetProcessSerializer
 
     def get_queryset(self):
         user: User = self.request.user
@@ -25,6 +24,14 @@ class ProcessListApiView(ListAPIView):
             return qs
 
         return qs.filter(organization=user.organization)
+
+
+class ProcessListApiView(BaseQuerysetMixin, ListAPIView):
+    serializer_class = GetProcessSerializer
+
+
+class ProcessRetrieveApiView(BaseQuerysetMixin, RetrieveAPIView):
+    serializer_class = GetProcessSerializer
 
 
 class ProcessCreateApiView(CreateAPIView):

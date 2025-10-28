@@ -26,7 +26,13 @@ class TransactionService:
                 sender_product.quantity -= item.quantity
                 sender_product.save(update_fields=["quantity"])
 
-                receiver_product, _ = Product.objects.get_or_create(organization=receiver, material=sender_product.material, defaults={"quantity": 0})
+                receiver_product, _ = Product.objects.get_or_create(
+                    organization=receiver,
+                    project=transaction.project,
+                    material=sender_product.material,
+                    defaults={"quantity": 0, "purity": sender_product.purity, "source_description": f"Transfer from {transaction.sender.name}"},
+                )
+
                 receiver_product.quantity += item.quantity
                 receiver_product.save(update_fields=["quantity"])
 

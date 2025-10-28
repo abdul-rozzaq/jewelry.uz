@@ -1,6 +1,6 @@
 from django.utils.timezone import now
 
-from django.db.models import Sum
+from django.db.models import Sum, Count, ExpressionWrapper, F, FloatField
 
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
@@ -10,37 +10,56 @@ from apps.products.models import Product
 from apps.organizations.models import Organization
 from apps.transactions.models import Transaction
 
+fifteen_minutes = 15 * 60
+
 
 class DashboardStatisticsAPIView(ListAPIView):
     serializer_class = DashboardStatsSerializer
 
+    # @cache_response(timeout=fifteen_minutes)
     def get(self, request, *args, **kwargs):
         today = now().date()
-        # yesterday = today - timedelta(days=1)
 
-        products = Product.objects.all()
-        products_count = products.count()
-        products_total = products.aggregate(total=Sum("quantity"))["total"] or 0
+        products = Product.objects.aggregate(
+            products_count=Count("id"),
+            total_quantity=Sum("quantity"),
+            gold_quantity=Sum(
+                ExpressionWrapper(
+                    F("quantity") * (F("purity") / 100.0),
+                    output_field=FloatField(),
+                )
+            ),
+        )
 
-        organizations = Organization.objects.all()
-        organizations_count = organizations.count()
+        products_count = products["products_count"] or 0
+        products_total = products["total_quantity"] or 0
+        gold_quantity = products["gold_quantity"] or 0
 
-        transactions = Transaction.objects.filter(created_at__date=today)
+        organizations = Organization.objects.aggregate(count=Count("id"))
+        organizations_count = organizations["count"] or 0
 
-        transactions_count = transactions.count()
-        transactions_total = transactions.aggregate(total_quantity=Sum("items__quantity"))["total_quantity"] or 0
+        transactions = Transaction.objects.filter(created_at__date=today).aggregate(
+            count=Count("id"),
+            total_quantity=Sum("items__quantity"),
+        )
+
+        transactions_count = transactions["count"] or 0
+        transactions_total = transactions["total_quantity"] or 0
 
         response = {
             "products": {
                 "count": products_count,
                 "total": products_total,
             },
-            "organization": {
+            "organizations": {
                 "count": organizations_count,
             },
-            "transaction": {
+            "transactions": {
                 "count": transactions_count,
                 "total": transactions_total,
+            },
+            "gold": {
+                "total": gold_quantity,
             },
         }
 

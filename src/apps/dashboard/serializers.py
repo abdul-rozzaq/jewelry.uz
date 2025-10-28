@@ -1,8 +1,13 @@
 from rest_framework import serializers
 
 
+class StatisticsField(serializers.Serializer):
+    count = serializers.IntegerField(required=True)
+    total = serializers.FloatField(required=True)
+
+
 class DashboardStatsSerializer(serializers.Serializer):
-    materials = serializers.DictField()
-    workshops = serializers.DictField()
-    transfers = serializers.DictField()
-    pending = serializers.DictField()
+    materials = StatisticsField()
+    organizations = StatisticsField()
+    transactions = StatisticsField()
+    gold = StatisticsField()

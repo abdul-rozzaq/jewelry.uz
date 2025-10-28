@@ -4,10 +4,13 @@ from apps.materials.serializers import MaterialSerializer
 from apps.products.models import Product
 from apps.organizations.serializers import OrganizationSerializer
 from apps.processes.models import ProcessInput, ProcessOutput, Process, ProcessTemplate, ProcessType
+from apps.products.serializers import ProductReadSerializer
 from apps.users.models import User
 
 
 class ProcessInputGetSerializer(serializers.ModelSerializer):
+    material = MaterialSerializer(read_only=True)
+    product = ProductReadSerializer(read_only=True)
 
     class Meta:
         model = ProcessInput
@@ -15,6 +18,7 @@ class ProcessInputGetSerializer(serializers.ModelSerializer):
 
 
 class ProcessOutputGetSerializer(serializers.ModelSerializer):
+    material = MaterialSerializer(read_only=True)
 
     class Meta:
         model = ProcessOutput
@@ -36,24 +40,24 @@ class ProcessInputCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProcessInput
-        fields = ["product", "quantity"]
+        fields = ["product", "material", "quantity"]
 
     def validate_product(self, product: Product):
         user: User = self.context["request"].user
 
-        if user.organization != product.organization:
+        if product and user.organization != product.organization:
             raise serializers.ValidationError({"detail": "Siz bu mahsulotdan foydalana olmaysiz"})
 
         return product
 
-    def validate(self, attrs):
-        product: Product = attrs["product"]
-        quantity = attrs["quantity"]
+    # def validate(self, attrs):
+    #     product: Product = attrs["product"]
+    #     quantity = attrs["quantity"]
 
-        if product.quantity < quantity:
-            raise serializers.ValidationError({"detail": "Mahsulot yetarli emas"})
+    #     if product.quantity < quantity:
+    #         raise serializers.ValidationError({"detail": "Mahsulot yetarli emas"})
 
-        return attrs
+    #     return attrs
 
 
 class ProcessOutputCreateSerializer(serializers.ModelSerializer):
@@ -66,6 +70,8 @@ class ProcessOutputCreateSerializer(serializers.ModelSerializer):
 class CreateProcessSerializer(serializers.ModelSerializer):
     inputs = ProcessInputCreateSerializer(many=True, required=True, allow_empty=False)
     outputs = ProcessOutputCreateSerializer(many=True, required=True, allow_empty=False)
+
+    process_type = serializers.PrimaryKeyRelatedField(queryset=ProcessType.objects.all(), required=False, allow_null=True)
 
     class Meta:
         model = Process

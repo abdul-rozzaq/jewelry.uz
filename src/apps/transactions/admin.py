@@ -17,8 +17,9 @@ class TransactionAdmin(admin.ModelAdmin):
         "pk",
         "sender",
         "receiver",
+        "project",
         "status",
         "created_at",
     ]
-    list_editable = ["sender", "receiver", "status"]
+    list_editable = ["sender", "receiver", "status", "project"]
     inlines = [TransactionItemInline]
