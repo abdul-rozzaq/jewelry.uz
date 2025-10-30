@@ -102,6 +102,50 @@ class CreateProcessSerializer(serializers.ModelSerializer):
         return process
 
 
+class UpdateProcessSerializer(serializers.ModelSerializer):
+    inputs = ProcessInputCreateSerializer(many=True, required=False, allow_empty=True)
+    outputs = ProcessOutputCreateSerializer(many=True, required=False, allow_empty=True)
+
+    process_type = serializers.PrimaryKeyRelatedField(queryset=ProcessType.objects.all(), required=False, allow_null=True)
+
+    class Meta:
+        model = Process
+        fields = [
+            "organization",
+            "process_type",
+            "status",
+            "started_at",
+            "finished_at",
+            "inputs",
+            "outputs",
+        ]
+        read_only_fields = ["id", "created_at", "updated_at", "organization", "started_at"]
+
+    def update(self, instance: Process, validated_data):
+        inputs_data = validated_data.pop("inputs", None)
+        outputs_data = validated_data.pop("outputs", None)
+
+        # Update simple fields
+        for attr in ["process_type", "status", "finished_at"]:
+            if attr in validated_data:
+                setattr(instance, attr, validated_data[attr])
+        instance.save()
+
+        # Replace inputs if provided
+        if inputs_data is not None:
+            ProcessInput.objects.filter(process=instance).delete()
+            for input_data in inputs_data:
+                ProcessInput.objects.create(process=instance, **input_data)
+
+        # Replace outputs if provided
+        if outputs_data is not None:
+            ProcessOutput.objects.filter(process=instance).delete()
+            for output_data in outputs_data:
+                ProcessOutput.objects.create(process=instance, **output_data)
+
+        return instance
+
+
 class ProcessTemplateSerializer(serializers.ModelSerializer):
     inputs = MaterialSerializer(many=True)
     outputs = MaterialSerializer(many=True)

@@ -1,10 +1,10 @@
-from rest_framework.generics import ListAPIView, CreateAPIView, DestroyAPIView, RetrieveAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView, DestroyAPIView, RetrieveAPIView, UpdateAPIView
 from rest_framework.response import Response
 from rest_framework import exceptions
 
 from apps.processes.models import Process, ProcessStatus, ProcessType
 from apps.processes.permissions import CanDeleteProcess
-from apps.processes.serializers import CreateProcessSerializer, GetProcessSerializer, ProcessTypeSerializer
+from apps.processes.serializers import CreateProcessSerializer, GetProcessSerializer, ProcessTypeSerializer, UpdateProcessSerializer
 from apps.processes.services import ProcessService
 from apps.users.models import User, UserRoles
 
@@ -60,11 +60,17 @@ class ProcessCompleteApiView(CreateAPIView):
         if object.status != ProcessStatus.IN_PROCESS:
             raise exceptions.ValidationError({"detail": "Process allaqachon tasdiqlangan"})
 
+        ProcessService.check_process_completion(object)
+
         process = ProcessService.complete_process(object)
 
         serializer = self.get_serializer(process)
 
         return Response(serializer.data)
+
+
+class ProcessUpdateApiView(BaseQuerysetMixin, UpdateAPIView):
+    serializer_class = UpdateProcessSerializer
 
 
 class ProcessDestroyApiView(DestroyAPIView):

@@ -47,3 +47,15 @@ class ProcessService:
             process.save(update_fields=["status"])
 
         return process
+
+    @staticmethod
+    def check_process_completion(process: Process):
+        for i in process.inputs.all():
+            if i.quantity <= 0:
+                raise exceptions.ValidationError({"detail": "Kiritilgan mahsulotlarning miqdori musbat bo'lishi kerak."})
+
+        # total_input_mass = sum(inp.quantity for inp in process.inputs.all())
+        # total_output_mass = sum(outp.quantity for outp in process.outputs.all())
+
+        # if total_input_mass != total_output_mass:
+        #     raise exceptions.ValidationError({"detail": "Kiritilgan va chiqarilgan mahsulotlarning umumiy massasi mos kelmaydi."})
