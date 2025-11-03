@@ -13,7 +13,7 @@ from operator import itemgetter
 class ProductsViewset(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductReadSerializer
-    filterset_fields = ["organization"]
+    filterset_fields = ["organization", "is_composite"]
 
     def get_serializer_class(self):
         if self.action in ("create", "update", "partial_update", "destroy"):

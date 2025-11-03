@@ -13,7 +13,11 @@ class Material(BaseModel):
 
     name = models.CharField(max_length=100)
     unit = models.CharField(max_length=10, choices=UNIT_CHOICES)
-    purity = models.DecimalField(max_digits=6, decimal_places=3, default=0)
+    purity = models.DecimalField(max_digits=15, decimal_places=4, default=0)
+    mixes_with_gold = models.BooleanField(
+        default=False,
+        help_text="Whether this material mixes with gold (affects purity calculation).",
+    )
 
     def __str__(self):
         return f"{self.name} ({self.unit})"

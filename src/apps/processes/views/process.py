@@ -5,7 +5,7 @@ from rest_framework import exceptions
 from apps.processes.models import Process, ProcessStatus, ProcessType
 from apps.processes.permissions import CanDeleteProcess
 from apps.processes.serializers import CreateProcessSerializer, GetProcessSerializer, ProcessTypeSerializer, UpdateProcessSerializer
-from apps.processes.services import ProcessService
+from apps.processes.service import ProcessService
 from apps.users.models import User, UserRoles
 
 
@@ -59,8 +59,6 @@ class ProcessCompleteApiView(CreateAPIView):
 
         if object.status != ProcessStatus.IN_PROCESS:
             raise exceptions.ValidationError({"detail": "Process allaqachon tasdiqlangan"})
-
-        ProcessService.check_process_completion(object)
 
         process = ProcessService.complete_process(object)
 

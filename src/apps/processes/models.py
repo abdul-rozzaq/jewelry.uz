@@ -61,6 +61,9 @@ class Process(BaseModel):
     started_at = models.DateTimeField(auto_now_add=True)
     finished_at = models.DateTimeField(null=True, blank=True)
 
+    total_in = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True)
+    total_out = models.DecimalField(max_digits=15, decimal_places=4, null=True, blank=True)
+
     class Meta:
         verbose_name = "Process"
         verbose_name_plural = "Processes"
@@ -71,9 +74,9 @@ class Process(BaseModel):
 
 class ProcessInput(models.Model):
     process = models.ForeignKey(Process, related_name="inputs", on_delete=models.CASCADE)
-    material = models.ForeignKey(Material, on_delete=models.CASCADE, null=True)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True)
-    quantity = models.DecimalField(max_digits=15, decimal_places=3, null=True)
+    material = models.ForeignKey(Material, on_delete=models.CASCADE, null=True, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True)
+    quantity = models.DecimalField(max_digits=15, decimal_places=4, null=True)
 
     def __str__(self):
         return f"Input {self.product} {self.material} - {self.quantity}"
@@ -82,7 +85,7 @@ class ProcessInput(models.Model):
 class ProcessOutput(models.Model):
     process = models.ForeignKey(Process, related_name="outputs", on_delete=models.CASCADE)
     material = models.ForeignKey(Material, on_delete=models.CASCADE)
-    quantity = models.DecimalField(max_digits=15, decimal_places=3, null=True)
+    quantity = models.DecimalField(max_digits=15, decimal_places=4, null=True)
 
     def __str__(self):
         return f"Output {self.material.name} - {self.quantity}"
