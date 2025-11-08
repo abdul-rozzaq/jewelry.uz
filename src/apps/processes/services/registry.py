@@ -1,10 +1,8 @@
+from .default import DefaultStrategy
 from .mixing import MixingStrategy
+from .base import BaseProcessStrategy
 
-# from .refining import RefiningStrategy
-# from .splitting import SplittingStrategy
-
-STRATEGY_MAP = {
+STRATEGY_MAP: dict[str, BaseProcessStrategy] = {
+    "DEFAULT": DefaultStrategy,
     "MIXING": MixingStrategy,
-    # "REFINING": RefiningStrategy,
-    # "SPLITTING": SplittingStrategy,
 }
