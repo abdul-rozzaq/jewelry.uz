@@ -1,11 +1,13 @@
-from django.utils.timezone import now
+from django.utils.timezone import now, timedelta
 
 from django.db.models import Sum, Count, ExpressionWrapper, F, FloatField
+from django.db.models.functions import TruncDate, ExtractWeekDay
 
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 
 from apps.dashboard.serializers import DashboardStatsSerializer
+from apps.processes.models import Process, ProcessStatus
 from apps.products.models import Product
 from apps.organizations.models import Organization
 from apps.transactions.models import Transaction
@@ -19,6 +21,7 @@ class DashboardStatisticsAPIView(ListAPIView):
     # @cache_response(timeout=fifteen_minutes)
     def get(self, request, *args, **kwargs):
         today = now().date()
+        seven_days_ago = today - timedelta(days=7)
 
         products = Product.objects.aggregate(
             products_count=Count("id"),
@@ -43,8 +46,28 @@ class DashboardStatisticsAPIView(ListAPIView):
             total_quantity=Sum("items__quantity"),
         )
 
+        transactions_last_week = (
+            Transaction.objects.filter()
+            .annotate(day=TruncDate("created_at"), weekday=ExtractWeekDay("created_at"))  # 1=Yakshanba, 2=Dushanba, ..., 7=Shanba
+            .values("day", "weekday")
+            .annotate(
+                count=Count("id"),
+            )
+            .order_by("day")
+        )
+
         transactions_count = transactions["count"] or 0
         transactions_total = transactions["total_quantity"] or 0
+
+        loses = (
+            Process.objects.filter(status=ProcessStatus.COMPLETED)
+            .annotate(
+                lost_quantity=F("total_in") - F("total_out"),
+            )
+            .aggregate(
+                total_lost_quantity=Sum("lost_quantity"),
+            )
+        )
 
         response = {
             "products": {
@@ -57,9 +80,13 @@ class DashboardStatisticsAPIView(ListAPIView):
             "transactions": {
                 "count": transactions_count,
                 "total": transactions_total,
+                "last_week": list(transactions_last_week),
             },
             "gold": {
                 "total": gold_quantity,
+            },
+            "loses": {
+                "total": loses["total_lost_quantity"] or 0,
             },
         }
 

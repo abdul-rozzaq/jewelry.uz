@@ -15,7 +15,7 @@ class BaseQuerysetMixin:
     def get_queryset(self):
         user: User = self.request.user
 
-        qs = Process.objects.all().order_by("-id")
+        qs = Process.objects.select_related("process_type", "organization").order_by("-id")
 
         if not user.is_authenticated:
             return self.queryset
