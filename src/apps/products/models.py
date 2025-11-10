@@ -7,9 +7,9 @@ from apps.projects.models import Project
 
 
 class Product(BaseModel):
-    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
-    project = models.ForeignKey(Project, on_delete=models.SET_NULL, null=True, blank=True)
-    material = models.ForeignKey(Material, on_delete=models.CASCADE, related_name="products")
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, db_index=True)
+    project = models.ForeignKey(Project, on_delete=models.SET_NULL, null=True, blank=True, db_index=True)
+    material = models.ForeignKey(Material, on_delete=models.CASCADE, related_name="products", db_index=True)
     quantity = models.DecimalField(max_digits=15, decimal_places=4)
     purity = models.DecimalField(max_digits=15, decimal_places=4, default=0)
     is_composite = models.BooleanField(
@@ -56,3 +56,12 @@ class Product(BaseModel):
     #             pass
 
     #     super().save(*args, **kwargs)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["organization", "project", "material"], name="prod_org_proj_mat_idx"),
+            models.Index(fields=["organization", "material"], name="prod_org_mat_idx"),
+        ]
+        constraints = [
+            models.UniqueConstraint(fields=["organization", "project", "material"], name="uniq_org_proj_mat"),
+        ]

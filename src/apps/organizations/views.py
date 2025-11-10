@@ -18,7 +18,17 @@ class OrganizationViewSet(ModelViewSet):
     def transactions(self, request, *args, **kwargs):
         obj: Organization = self.get_object()
 
-        queryset = Transaction.objects.filter(Q(sender=obj) | Q(receiver=obj))
+        queryset = (
+            Transaction.objects.select_related("sender", "receiver", "project")
+            .prefetch_related(
+                "items",
+                "items__product__material",
+                "items__product__organization",
+                "items__product__project",
+            )
+            .filter(Q(sender=obj) | Q(receiver=obj))
+            .order_by("-id")
+        )
 
         start_date = request.GET.get("start_date", None)
         end_date = request.GET.get("end_date", None)

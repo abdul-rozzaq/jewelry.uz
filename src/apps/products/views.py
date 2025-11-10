@@ -11,7 +11,7 @@ from operator import itemgetter
 
 
 class ProductsViewset(viewsets.ModelViewSet):
-    queryset = Product.objects.all()
+    queryset = Product.objects.select_related("material", "organization", "project").all()
     serializer_class = ProductReadSerializer
     filterset_fields = ["organization", "is_composite"]
 
@@ -45,7 +45,7 @@ class ProductsViewset(viewsets.ModelViewSet):
         material, quantity = itemgetter("material", "quantity")(data)
         project = data.get("project", None)
 
-        existing_product = Product.objects.filter(
+        existing_product = Product.objects.select_for_update().filter(
             organization=organization,
             project=project,
             material=material,

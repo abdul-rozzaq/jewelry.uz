@@ -26,7 +26,16 @@ class TransactionListView(ListAPIView):
         if not user.is_authenticated:
             return self.queryset
 
-        queryset = Transaction.objects.all().order_by("-id")
+        queryset = (
+            Transaction.objects.select_related("sender", "receiver", "project")
+            .prefetch_related(
+                "items",
+                "items__product__material",
+                "items__product__organization",
+                "items__product__project",
+            )
+            .order_by("-id")
+        )
 
         if user.role != UserRoles.ADMIN:
             return queryset.filter(Q(sender=user.organization) | Q(receiver=user.organization))
@@ -45,7 +54,12 @@ class TransactionCreateView(CreateAPIView):
 
 
 class TransactionDetailView(RetrieveAPIView):
-    queryset = Transaction.objects.all()
+    queryset = Transaction.objects.select_related("sender", "receiver", "project").prefetch_related(
+        "items",
+        "items__product__material",
+        "items__product__organization",
+        "items__product__project",
+    )
     serializer_class = GetTransactionSerializer
     permission_classes = [permissions.IsAuthenticated]
 

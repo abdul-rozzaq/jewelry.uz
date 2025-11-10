@@ -56,7 +56,7 @@ class Process(BaseModel):
 
     process_type = models.ForeignKey(ProcessType, on_delete=models.SET_NULL, null=True, blank=True)
 
-    status = models.CharField(max_length=64, choices=ProcessStatus.choices, default=ProcessStatus.IN_PROCESS)
+    status = models.CharField(max_length=64, choices=ProcessStatus.choices, default=ProcessStatus.IN_PROCESS, db_index=True)
 
     started_at = models.DateTimeField(auto_now_add=True)
     finished_at = models.DateTimeField(null=True, blank=True)
@@ -67,6 +67,9 @@ class Process(BaseModel):
     class Meta:
         verbose_name = "Process"
         verbose_name_plural = "Processes"
+        indexes = [
+            models.Index(fields=["organization", "status"], name="proc_org_status_idx"),
+        ]
 
     def __str__(self):
         return f"{self.organization.name} - {self.process_type} ({self.id})"
