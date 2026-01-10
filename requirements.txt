@@ -7,10 +7,12 @@ djangorestframework==3.16.1
 djangorestframework_simplejwt==5.5.1
 drf-yasg==1.21.10
 environs==14.3.0
+et_xmlfile==2.0.0
 gprof2dot==2025.4.14
 greenlet==3.2.4
 inflection==0.5.1
 marshmallow==4.0.1
+openpyxl==3.1.5
 packaging==25.0
 PyJWT==2.10.1
 python-dotenv==1.1.1
@@ -21,4 +23,5 @@ redis==6.4.0
 SQLAlchemy==2.0.43
 sqlparse==0.5.3
 typing_extensions==4.15.0
+tzdata==2025.3
 uritemplate==4.2.0
