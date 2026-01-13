@@ -14,6 +14,8 @@ class ProcessStatus(models.TextChoices):
 
 class ProcessTypes(models.TextChoices):
     MELTING = "melting", "Melting"
+    COAT = "coat", "Coat"  # Temirli oltin
+
     POLISHING = "polishing", "Polishing"
     CASTING = "casting", "Casting"
     MIXING = "mixing", "Mixing"
@@ -41,6 +43,8 @@ class ProcessType(models.Model):
     name = models.JSONField(default=default_name)
     type = models.CharField(max_length=64, choices=ProcessTypes.choices, default=ProcessTypes.MIXING)
     template = models.ForeignKey(ProcessTemplate, null=True, blank=True, on_delete=models.SET_NULL)
+
+    can_cause_loss = models.BooleanField(default=False, help_text="Bu jarayon material yo'qotilishiga olib kelishi mumkinligini ko'rsatadi.")
 
     def get_name(self, lang="en"):
         """Tilga qarab nomni qaytaradi. Agar mavjud bo‘lmasa, type nomini beradi."""
