@@ -26,6 +26,9 @@ class ProductWriteSerializer(serializers.ModelSerializer):
             "pure_gold",
             "source_description",
         )
+        extra_kwargs = {
+            "pure_gold": {"required": False},
+        }
 
     def validate(self, attrs):
         is_composite = attrs.get("is_composite", False)
