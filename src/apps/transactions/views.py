@@ -10,7 +10,7 @@ from apps.transactions.permissions import CanAcceptTransaction
 from apps.transactions.services import TransactionService
 from apps.users.models import User, UserRoles
 
-from .models import Transaction
+from .models import Transaction, TransactionStatuses
 from .serializers import CreateTransactionSerializer, GetTransactionSerializer
 
 
@@ -88,3 +88,31 @@ class TransactionAcceptView(GenericAPIView):
         serializer = GetTransactionSerializer(instance=updated_tx)
 
         return Response({"detail": f"{updated_tx} muvaffaqiyatli tasdiqlandi", "transaction": serializer.data})
+
+
+class DashboardTransactionsAPIView(ListAPIView):
+    serializer_class = GetTransactionSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user: User = self.request.user
+
+        if not user.is_authenticated or not user.organization:
+            return Transaction.objects.none()
+
+        queryset = (
+            Transaction.objects.select_related("sender", "receiver", "project")
+            .prefetch_related(
+                "items",
+                "items__product__material",
+                "items__product__organization",
+                "items__product__project",
+            )
+            .filter(receiver=user.organization, status=TransactionStatuses.PENDING)
+            .order_by("-id")
+        )
+
+        # if user.role != UserRoles.ADMIN:
+        #     return queryset.filter(Q(sender=user.organization) | Q(receiver=user.organization))
+
+        return queryset

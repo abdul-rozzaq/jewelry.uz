@@ -1,7 +1,9 @@
-from django.utils.timezone import now, timedelta
+from django.utils.timezone import now
 
 from django.db.models import Sum, Count, ExpressionWrapper, F, FloatField
 from django.db.models.functions import TruncDate, ExtractWeekDay
+
+from django.utils.timezone import timedelta
 
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
@@ -21,9 +23,9 @@ class DashboardStatisticsAPIView(ListAPIView):
     # @cache_response(timeout=fifteen_minutes)
     def get(self, request, *args, **kwargs):
         today = now().date()
-        seven_days_ago = today - timedelta(days=7)
+        user = request.user
 
-        products = Product.objects.aggregate(
+        products = Product.objects.filter(organization=user.organization).aggregate(
             products_count=Count("id"),
             total_quantity=Sum("quantity"),
             gold_quantity=Sum(
@@ -41,13 +43,13 @@ class DashboardStatisticsAPIView(ListAPIView):
         organizations = Organization.objects.aggregate(count=Count("id"))
         organizations_count = organizations["count"] or 0
 
-        transactions = Transaction.objects.filter(created_at__date=today).aggregate(
+        transactions = Transaction.objects.filter(created_at__date=today, receiver=user.organization).aggregate(
             count=Count("id"),
             total_quantity=Sum("items__quantity"),
         )
 
         transactions_last_week = (
-            Transaction.objects.filter()
+            Transaction.objects.filter(receiver=user.organization, created_at__date__gte=today - timedelta(days=7))
             .annotate(day=TruncDate("created_at"), weekday=ExtractWeekDay("created_at"))  # 1=Yakshanba, 2=Dushanba, ..., 7=Shanba
             .values("day", "weekday")
             .annotate(
@@ -60,7 +62,7 @@ class DashboardStatisticsAPIView(ListAPIView):
         transactions_total = transactions["total_quantity"] or 0
 
         loses = (
-            Process.objects.filter(status=ProcessStatus.COMPLETED)
+            Process.objects.filter(status=ProcessStatus.COMPLETED, organization=user.organization)
             .annotate(
                 lost_quantity=F("total_in") - F("total_out"),
             )
