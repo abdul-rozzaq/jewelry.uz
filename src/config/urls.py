@@ -26,6 +26,7 @@ api_urls = [
     path("processes/", include("apps.processes.urls")),
     path("dashboard/", include("apps.dashboard.urls")),
     path("projects/", include("apps.projects.urls")),
+    path("notifications/", include("apps.notifications.urls")),
 ]
 
 urlpatterns = [

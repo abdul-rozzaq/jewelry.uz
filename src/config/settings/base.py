@@ -39,6 +39,7 @@ LOCAL_APPS = [
     "apps.users",
     "apps.dashboard",
     "apps.projects",
+    "apps.notifications",
 ]
 
 EXTERNAL_APPS = [
@@ -176,3 +177,9 @@ MEDIA_ROOT = BASE_DIR.parent / "media"
 AUTH_USER_MODEL = "users.User"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+# Web Push Notifications Settings
+VAPID_PRIVATE_KEY = env.str("VAPID_PRIVATE_KEY", "")
+VAPID_PUBLIC_KEY = env.str("VAPID_PUBLIC_KEY", "")
+VAPID_SUBJECT = env.str("VAPID_SUBJECT", "mailto:admin@jewelry.uz")
