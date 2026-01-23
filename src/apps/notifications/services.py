@@ -1,6 +1,7 @@
 import json
 import logging
-from datetime import datetime
+
+from django.utils import timezone
 from typing import Optional
 
 from django.conf import settings
@@ -31,7 +32,7 @@ class PushNotificationService:
             notification = Notification.objects.create(recipient_id=user_id, organization_id=organization_id, title=title, message=message, notification_type=notification_type, object_id=object_id)
 
             # Prepare payload
-            payload = {"title": title, "body": message, "icon": "/static/icons/icon-192x192.png", "badge": "/static/icons/badge-72x72.png", "data": {"notification_id": notification.id, "type": notification_type, "object_id": object_id, "timestamp": datetime.now().isoformat()}, "actions": [{"action": "view", "title": "View"}, {"action": "dismiss", "title": "Dismiss"}], "requireInteraction": True, "timestamp": datetime.now().timestamp() * 1000}  # Customize as needed  # Customize as needed
+            payload = {"title": title, "body": message, "icon": "/static/icons/icon-192x192.png", "badge": "/static/icons/badge-72x72.png", "data": {"notification_id": notification.id, "type": notification_type, "object_id": object_id, "timestamp": timezone.now().isoformat()}, "actions": [{"action": "view", "title": "View"}, {"action": "dismiss", "title": "Dismiss"}], "requireInteraction": True, "timestamp": timezone.now().timestamp() * 1000}  # Customize as needed  # Customize as needed
 
             # Send to all subscriptions
             success_count = 0
@@ -67,7 +68,7 @@ class PushNotificationService:
             # Update notification record
             if success_count > 0:
                 notification.is_pushed = True
-                notification.push_sent_at = datetime.now()
+                notification.push_sent_at = timezone.now()
 
             if errors:
                 notification.push_error = "; ".join(errors)

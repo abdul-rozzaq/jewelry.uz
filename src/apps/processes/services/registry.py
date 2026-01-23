@@ -1,9 +1,9 @@
 from .default import DefaultStrategy
-from .mixing import MixingStrategy
+from .mixing import CoatStrategy
 from .base import BaseProcessStrategy
 
 STRATEGY_MAP: dict[str, BaseProcessStrategy] = {
     "DEFAULT": DefaultStrategy,
-    "MIXING": MixingStrategy,
-    "COAT": MixingStrategy,  # Temirli oltin
+    "MIXING": CoatStrategy,
+    "COAT": CoatStrategy,  # Temirli oltin
 }

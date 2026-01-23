@@ -18,6 +18,8 @@ class Material(BaseModel):
         default=False,
         help_text="Whether this material mixes with gold (affects purity calculation).",
     )
+    
+    is_scrap = models.BooleanField(default=False, help_text="Whether this material is considered scrap.")
 
     def __str__(self):
         return f"{self.name} ({self.unit})"
