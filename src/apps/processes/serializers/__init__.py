@@ -1,7 +1,4 @@
-# This file is kept for backwards compatibility
-# All serializers have been moved to the serializers package
-
-from .serializers import (
+from .process import (
     ProcessInputGetSerializer,
     ProcessOutputGetSerializer,
     GetProcessSerializer,
@@ -9,10 +6,12 @@ from .serializers import (
     ProcessOutputCreateSerializer,
     CreateProcessSerializer,
     UpdateProcessSerializer,
+)
+from .process_template import (
     ProcessTemplateItemSerializer,
     ProcessTemplateSerializer,
-    ProcessTypeSerializer,
 )
+from .process_type import ProcessTypeSerializer
 
 __all__ = [
     "ProcessInputGetSerializer",

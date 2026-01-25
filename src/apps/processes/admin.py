@@ -1,21 +1,16 @@
 from django.contrib import admin
 
-from .models import Process, ProcessInput, ProcessOutput, ProcessTemplate, ProcessType
-
-
-class ProcessInputInline(admin.TabularInline):
-    model = ProcessInput
-    extra = 1
-
-
-class ProcessOutputInline(admin.TabularInline):
-    model = ProcessOutput
-    extra = 1
+from .models import Process, ProcessInput, ProcessOutput, ProcessTemplate, ProcessTemplateItem,  ProcessType
 
 
 @admin.register(ProcessTemplate)
 class ProcessTemplateAdmin(admin.ModelAdmin):
     list_display = ["pk", "name"]
+    filter_horizontal = ["inputs", "outputs"]
+
+@admin.register(ProcessTemplateItem)
+class ProcessTemplateItemAdmin(admin.ModelAdmin):
+    list_display = ["pk", "material", "use_all_material"]
 
 
 @admin.register(ProcessType)
@@ -26,6 +21,17 @@ class ProcessTypeAdmin(admin.ModelAdmin):
         return obj.get_name().upper()
 
     type_name.short_description = "Name"
+
+
+
+class ProcessInputInline(admin.TabularInline):
+    model = ProcessInput
+    extra = 1
+
+
+class ProcessOutputInline(admin.TabularInline):
+    model = ProcessOutput
+    extra = 1
 
 
 @admin.register(Process)

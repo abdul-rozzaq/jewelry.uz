@@ -6,6 +6,8 @@ from django.shortcuts import get_object_or_404
 from .models import Notification, PushSubscription
 from .serializers import PushSubscriptionSerializer, NotificationListSerializer
 
+from apps.common.serializers import EmptySerializer
+
 
 class SubscribePushView(generics.CreateAPIView):
     """Subscribe user to push notifications"""
@@ -56,7 +58,7 @@ class NotificationListView(generics.ListAPIView):
 
 class MarkAsReadView(generics.UpdateAPIView):
     """Mark notification as read"""
-
+    serializer_class = EmptySerializer
     permission_classes = [IsAuthenticated]
 
     def patch(self, request, pk, *args, **kwargs):

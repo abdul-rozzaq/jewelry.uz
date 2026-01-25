@@ -1,57 +1,17 @@
 from django.db import models
 
 from apps.common.models import BaseModel
-from apps.organizations.models import Organization
 from apps.materials.models import Material
+from apps.organizations.models import Organization
 from apps.products.models import Product
 from apps.projects.models import Project
+
+from .process_type import ProcessType
 
 
 class ProcessStatus(models.TextChoices):
     IN_PROCESS = "in process", "In process"
     COMPLETED = "completed", "Completed"
-
-
-class ProcessTypes(models.TextChoices):
-    MELTING = "melting", "Melting"
-    COAT = "coat", "Coat"  # Temirli oltin
-
-    POLISHING = "polishing", "Polishing"
-    CASTING = "casting", "Casting"
-    MIXING = "mixing", "Mixing"
-    CUTTING = "cutting", "Cutting"
-    ASSEMBLING = "assembling", "Assembling"
-    TESTING = "testing", "Testing"
-    PACKAGING = "packaging", "Packaging"
-
-
-class ProcessTemplate(models.Model):
-    name = models.CharField(max_length=256)
-
-    inputs = models.ManyToManyField(Material, related_name="template_inputs")
-    outputs = models.ManyToManyField(Material, related_name="template_outputs")
-
-    def __str__(self):
-        return f"Template(name={self.name})"
-
-
-def default_name():
-    return {"uz": "", "en": "", "tr": ""}
-
-
-class ProcessType(models.Model):
-    name = models.JSONField(default=default_name)
-    type = models.CharField(max_length=64, choices=ProcessTypes.choices, default=ProcessTypes.MIXING)
-    template = models.ForeignKey(ProcessTemplate, null=True, blank=True, on_delete=models.SET_NULL)
-
-    can_cause_loss = models.BooleanField(default=False, help_text="Bu jarayon material yo'qotilishiga olib kelishi mumkinligini ko'rsatadi.")
-
-    def get_name(self, lang="en"):
-        """Tilga qarab nomni qaytaradi. Agar mavjud bo‘lmasa, type nomini beradi."""
-        return self.name.get(lang) or self.get_type_display()
-
-    def __str__(self):
-        return self.get_name("uz")
 
 
 class Process(BaseModel):
