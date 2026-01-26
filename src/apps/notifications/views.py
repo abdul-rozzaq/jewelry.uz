@@ -26,6 +26,7 @@ class SubscribePushView(generics.CreateAPIView):
 class UnsubscribePushView(generics.CreateAPIView):
     """Unsubscribe user from push notifications"""
 
+    serializer_class = EmptySerializer
     permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):

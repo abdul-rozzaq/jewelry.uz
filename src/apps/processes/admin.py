@@ -1,16 +1,38 @@
 from django.contrib import admin
 
-from .models import Process, ProcessInput, ProcessOutput, ProcessTemplate, ProcessTemplateItem,  ProcessType
+from .models import Process, ProcessInput, ProcessOutput, ProcessTemplate, ProcessTemplateInputItem, ProcessTemplateOutputItem, ProcessType
+
+
+class ProcessTemplateInputItemInline(admin.TabularInline):
+    model = ProcessTemplateInputItem
+    extra = 1
+    fields = ["material", "role", "use_all_material"]
+
+
+class ProcessTemplateOutputItemInline(admin.TabularInline):
+    model = ProcessTemplateOutputItem
+    extra = 1
+    fields = ["material", "role", "use_all_material"]
 
 
 @admin.register(ProcessTemplate)
 class ProcessTemplateAdmin(admin.ModelAdmin):
     list_display = ["pk", "name"]
-    filter_horizontal = ["inputs", "outputs"]
+    inlines = [ProcessTemplateInputItemInline, ProcessTemplateOutputItemInline]
 
-@admin.register(ProcessTemplateItem)
-class ProcessTemplateItemAdmin(admin.ModelAdmin):
-    list_display = ["pk", "material", "use_all_material"]
+
+# @admin.register(ProcessTemplateInputItem)
+# class ProcessTemplateInputItemAdmin(admin.ModelAdmin):
+#     list_display = ["pk", "template", "material", "role", "use_all_material"]
+#     list_filter = ["role", "use_all_material"]
+#     search_fields = ["template__name", "material__name"]
+
+
+# @admin.register(ProcessTemplateOutputItem)
+# class ProcessTemplateOutputItemAdmin(admin.ModelAdmin):
+#     list_display = ["pk", "template", "material", "role", "use_all_material"]
+#     list_filter = ["role", "use_all_material"]
+#     search_fields = ["template__name", "material__name"]
 
 
 @admin.register(ProcessType)
@@ -21,7 +43,6 @@ class ProcessTypeAdmin(admin.ModelAdmin):
         return obj.get_name().upper()
 
     type_name.short_description = "Name"
-
 
 
 class ProcessInputInline(admin.TabularInline):

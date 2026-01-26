@@ -7,12 +7,12 @@ class ProcessService:
 
     @staticmethod
     def complete_process(process: Process):
-        process_type = process.process_type.type.upper() if process.process_type else "DEFAULT"
-        strategy_class = STRATEGY_MAP.get(process_type)
-
-        if not strategy_class:
-            raise Exception(f"Strategy topilmadi: {process_type}")
+        strategy_class = ProcessService.get_strategy_class(process.process_type.type)
 
         strategy: BaseProcessStrategy = strategy_class(process)
 
         return strategy.calculate()
+
+    @staticmethod
+    def get_strategy_class(_type: tuple) -> BaseProcessStrategy:
+        return STRATEGY_MAP.get(_type, STRATEGY_MAP["DEFAULT"])

@@ -8,7 +8,8 @@ from .process import (
     UpdateProcessSerializer,
 )
 from .process_template import (
-    ProcessTemplateItemSerializer,
+    ProcessTemplateInputItemSerializer,
+    ProcessTemplateOutputItemSerializer,
     ProcessTemplateSerializer,
 )
 from .process_type import ProcessTypeSerializer
@@ -24,4 +25,6 @@ __all__ = [
     "ProcessTemplateItemSerializer",
     "ProcessTemplateSerializer",
     "ProcessTypeSerializer",
+    "ProcessTemplateInputItemSerializer",
+    "ProcessTemplateOutputItemSerializer",
 ]
