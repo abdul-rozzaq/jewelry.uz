@@ -11,6 +11,7 @@ class ProcessTypes(models.TextChoices):
     MELTING = "melting", "Melting"
     COAT = "coat", "Coat"  # Temirli oltin
     MIXING = "mixing", "Mixing"
+    ALLOY = "alloy", "Alloy"
 
     POLISHING = "polishing", "Polishing"
     CASTING = "casting", "Casting"
