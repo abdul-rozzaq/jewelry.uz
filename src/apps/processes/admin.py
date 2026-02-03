@@ -58,7 +58,7 @@ class ProcessOutputInline(admin.TabularInline):
 @admin.register(Process)
 class ProcessAdmin(admin.ModelAdmin):
     list_display = ["pk", "organization", "process_type", "status", "started_at", "finished_at"]
-    list_filter = ["started_at", "finished_at"]
+    list_filter = ["started_at", "finished_at", "organization", "process_type", "status"]
     search_fields = ["organization", "process_type"]
     list_editable = ["status", "process_type"]
 
