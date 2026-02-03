@@ -1,4 +1,4 @@
-from asyncio import exceptions
+from rest_framework import exceptions
 from decimal import ROUND_HALF_UP, Decimal as Q
 from django.db import transaction, models
 

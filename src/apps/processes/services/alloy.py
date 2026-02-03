@@ -34,14 +34,10 @@ class AlloyStrategy(BaseProcessStrategy):
         input_roles, output_roles = self._get_role_maps(template)
         self._validate_structure(input_roles, output_roles)
 
-        pure_gold, gold_mass, metal_mass = self._process_inputs(
-            process, input_roles
-        )
+        pure_gold, gold_mass, metal_mass = self._process_inputs(process, input_roles)
         output_material, target_purity = self._get_output_material(process)
 
-        final_mass = self._calculate_final_mass(
-            pure_gold, gold_mass, metal_mass, target_purity
-        )
+        final_mass = self._calculate_final_mass(pure_gold, gold_mass, metal_mass, target_purity)
 
         self._update_output_product(
             process,
@@ -50,6 +46,7 @@ class AlloyStrategy(BaseProcessStrategy):
             pure_gold,
             target_purity,
         )
+
         self._finalize_process(process, pure_gold)
 
         return process
@@ -61,14 +58,9 @@ class AlloyStrategy(BaseProcessStrategy):
         return template
 
     def _get_role_maps(self, template):
-        input_roles = {
-            item.material_id: item.role
-            for item in template.template_inputs.all()
-        }
-        output_roles = {
-            item.material_id: item.role
-            for item in template.template_outputs.all()
-        }
+        input_roles = {item.material_id: item.role for item in template.template_inputs.all()}
+        output_roles = {item.material_id: item.role for item in template.template_outputs.all()}
+
         return input_roles, output_roles
 
     def _validate_structure(self, input_roles, output_roles):
@@ -82,25 +74,22 @@ class AlloyStrategy(BaseProcessStrategy):
             raise ValidationError("Only COMPOSITE output is allowed")
 
     def _process_inputs(self, process, input_roles):
-        inputs = (
-            process.inputs
-            .select_related("material", "product")
-            .select_for_update()
-        )
+        inputs = process.inputs.select_related("material", "product").select_for_update()
 
         pure_gold = Q("0")
         gold_mass = Q("0")
         metal_mass = Q("0")
 
         for inp in inputs:
-            if not inp.material:
+            material = inp.material or (inp.product.material if inp.product else None)
+
+            if not material:
                 raise ValidationError("Input material is required")
 
-            role = input_roles.get(inp.material_id)
+            role = input_roles.get(material.id)
+
             if not role:
-                raise ValidationError(
-                    f"Material {inp.material} not allowed by template"
-                )
+                raise ValidationError(f"Material {material} not allowed by template")
 
             qty = Q(inp.quantity)
 
@@ -109,7 +98,8 @@ class AlloyStrategy(BaseProcessStrategy):
 
             if role == ProcessItemRole.BASE_GOLD:
                 gold_mass += qty
-                pure_gold += qty * Q(inp.material.purity) / Q("100")
+                pure_gold += qty * Q(material.purity) / Q("100")
+
             elif role == ProcessItemRole.METAL:
                 metal_mass += qty
 
@@ -124,6 +114,7 @@ class AlloyStrategy(BaseProcessStrategy):
 
     def _get_output_material(self, process):
         output = process.outputs.select_related("material").first()
+
         if not output:
             raise ValidationError("Output is required")
 
@@ -135,22 +126,16 @@ class AlloyStrategy(BaseProcessStrategy):
 
         return output_material, target_purity
 
-    def _calculate_final_mass(
-        self, pure_gold, gold_mass, metal_mass, target_purity
-    ):
+    def _calculate_final_mass(self, pure_gold, gold_mass, metal_mass, target_purity):
         final_mass = (pure_gold / target_purity) * Q("100")
         required_metal = final_mass - gold_mass
 
         if metal_mass < required_metal:
-            raise ValidationError(
-                f"Not enough metal. Required: {required_metal}, got: {metal_mass}"
-            )
+            raise ValidationError(f"Not enough metal. Required: {required_metal}, got: {metal_mass}")
 
         return final_mass
 
-    def _update_output_product(
-        self, process, output_material, final_mass, pure_gold, target_purity
-    ):
+    def _update_output_product(self, process, output_material, final_mass, pure_gold, target_purity):
         product, _ = Product.objects.select_for_update().get_or_create(
             organization=process.organization,
             material=output_material,
@@ -165,12 +150,11 @@ class AlloyStrategy(BaseProcessStrategy):
         product.quantity += final_mass
         product.pure_gold += pure_gold
         product.purity = target_purity
-        product.save(
-            update_fields=["quantity", "pure_gold", "purity", "is_composite"]
-        )
+        product.save(update_fields=["quantity", "pure_gold", "purity", "is_composite"])
 
     def _finalize_process(self, process, pure_gold):
         process.total_in = pure_gold
         process.total_out = pure_gold
         process.status = ProcessStatus.COMPLETED
+
         process.save(update_fields=["total_in", "total_out", "status"])

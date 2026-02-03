@@ -1,7 +1,8 @@
+from django.shortcuts import get_object_or_404
+
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from django.shortcuts import get_object_or_404
 
 from .models import Notification, PushSubscription
 from .serializers import PushSubscriptionSerializer, NotificationListSerializer
@@ -59,8 +60,10 @@ class NotificationListView(generics.ListAPIView):
 
 class MarkAsReadView(generics.UpdateAPIView):
     """Mark notification as read"""
+
     serializer_class = EmptySerializer
     permission_classes = [IsAuthenticated]
+    queryset = Notification.objects.none()
 
     def patch(self, request, pk, *args, **kwargs):
         notification = get_object_or_404(Notification, pk=pk, recipient=request.user)
