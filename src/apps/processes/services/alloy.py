@@ -70,7 +70,7 @@ class AlloyStrategy(BaseProcessStrategy):
                     "quantity": Q("0"),
                     "pure_gold": Q("0"),
                     "purity": output.material.purity,
-                    "is_composite": True,
+                    "is_composite": False,
                 },
             )
 
