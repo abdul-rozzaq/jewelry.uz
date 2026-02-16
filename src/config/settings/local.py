@@ -27,3 +27,15 @@ CACHES = {
         "LOCATION": "redis://127.0.0.1:6379",
     },
 }
+
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": env.str("DB_NAME", default="jewelry_db"),
+        "USER": env.str("DB_USER", default="postgres"),
+        "PASSWORD": env.str("DB_PASSWORD", default="password"),
+        "HOST": env.str("DB_HOST", default="127.0.0.1"),
+        "PORT": env.str("DB_PORT", default="5432"),
+    }
+}
