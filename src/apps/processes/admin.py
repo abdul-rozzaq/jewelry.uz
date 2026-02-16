@@ -1,65 +1,19 @@
 from django.contrib import admin
+from .models import (
+    CoatProcess,
+    GoldDowngradeProcess,
+)
 
-from .models import Process, ProcessInput, ProcessOutput, ProcessTemplate, ProcessTemplateInputItem, ProcessTemplateOutputItem, ProcessType
+@admin.register(CoatProcess)
+class CoatProcessAdmin(admin.ModelAdmin):
+    list_display = ("id", "organization", "status", "gold_input", "iron_input", "created_at")
+    list_filter = ("status", "organization")
+    search_fields = ("id",)
+    readonly_fields = ("total_in", "total_out", "pure_gold")
 
-
-class ProcessTemplateInputItemInline(admin.TabularInline):
-    model = ProcessTemplateInputItem
-    extra = 1
-    fields = ["material", "role", "use_all_material"]
-
-
-class ProcessTemplateOutputItemInline(admin.TabularInline):
-    model = ProcessTemplateOutputItem
-    extra = 1
-    fields = ["material", "role", "use_all_material"]
-
-
-@admin.register(ProcessTemplate)
-class ProcessTemplateAdmin(admin.ModelAdmin):
-    list_display = ["pk", "name"]
-    inlines = [ProcessTemplateInputItemInline, ProcessTemplateOutputItemInline]
-
-
-# @admin.register(ProcessTemplateInputItem)
-# class ProcessTemplateInputItemAdmin(admin.ModelAdmin):
-#     list_display = ["pk", "template", "material", "role", "use_all_material"]
-#     list_filter = ["role", "use_all_material"]
-#     search_fields = ["template__name", "material__name"]
-
-
-# @admin.register(ProcessTemplateOutputItem)
-# class ProcessTemplateOutputItemAdmin(admin.ModelAdmin):
-#     list_display = ["pk", "template", "material", "role", "use_all_material"]
-#     list_filter = ["role", "use_all_material"]
-#     search_fields = ["template__name", "material__name"]
-
-
-@admin.register(ProcessType)
-class ProcessTypeAdmin(admin.ModelAdmin):
-    list_display = ["pk", "type_name", "type", "template"]
-
-    def type_name(self, obj, *args, **kwargs):
-        return obj.get_name().upper()
-
-    type_name.short_description = "Name"
-
-
-class ProcessInputInline(admin.TabularInline):
-    model = ProcessInput
-    extra = 1
-
-
-class ProcessOutputInline(admin.TabularInline):
-    model = ProcessOutput
-    extra = 1
-
-
-@admin.register(Process)
-class ProcessAdmin(admin.ModelAdmin):
-    list_display = ["pk", "organization", "process_type", "status", "started_at", "finished_at"]
-    list_filter = ["started_at", "finished_at", "organization", "process_type", "status"]
-    search_fields = ["organization", "process_type"]
-    list_editable = ["status", "process_type"]
-
-    inlines = [ProcessInputInline, ProcessOutputInline]
+@admin.register(GoldDowngradeProcess)
+class GoldDowngradeProcessAdmin(admin.ModelAdmin):
+    list_display = ("id", "organization", "status", "gold_999_input", "gold_585_output", "created_at")
+    list_filter = ("status", "organization")
+    search_fields = ("id",)
+    readonly_fields = ("total_in", "total_out", "pure_gold")

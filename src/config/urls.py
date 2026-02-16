@@ -22,7 +22,7 @@ api_urls = [
     path("organizations/", include("apps.organizations.urls")),
     path("transactions/", include("apps.transactions.urls")),
     path("products/", include("apps.products.urls")),
-    path("materials/", include("apps.materials.urls")),
+    # path("materials/", include("apps.materials.urls")), # Removed
     path("processes/", include("apps.processes.urls")),
     path("dashboard/", include("apps.dashboard.urls")),
     path("projects/", include("apps.projects.urls")),

@@ -1,7 +1,7 @@
 from django.db import models
 
 from apps.common.models import BaseModel
-from apps.materials.models import Material
+from apps.common.choices.materials import MaterialType
 from apps.organizations.models import Organization
 from apps.projects.models import Project
 
@@ -9,7 +9,7 @@ from apps.projects.models import Project
 class Product(BaseModel):
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, db_index=True)
     project = models.ForeignKey(Project, on_delete=models.SET_NULL, null=True, blank=True, db_index=True)
-    material = models.ForeignKey(Material, on_delete=models.CASCADE, related_name="products", db_index=True)
+    material = models.CharField(max_length=32, choices=MaterialType.choices, db_index=True)
     quantity = models.DecimalField(max_digits=15, decimal_places=4)
     purity = models.DecimalField(max_digits=15, decimal_places=4, default=0)
     is_composite = models.BooleanField(
@@ -35,7 +35,7 @@ class Product(BaseModel):
             extra.append(f"Au {self.pure_gold}g")
         extra_str = f" | {'; '.join(extra)}" if extra else ""
 
-        return f"{self.material.name} ({self.quantity}{self.material.unit}){extra_str}"
+        return f"{self.get_material_display()} ({self.quantity}){extra_str}"
 
     @property
     def karat(self):

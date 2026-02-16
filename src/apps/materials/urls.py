@@ -1,9 +1,0 @@
-from rest_framework.routers import DefaultRouter
-
-from apps.materials.views import MaterialViewSet
-
-router = DefaultRouter()
-router.register(r"", MaterialViewSet)
-
-
-urlpatterns = router.urls + []
