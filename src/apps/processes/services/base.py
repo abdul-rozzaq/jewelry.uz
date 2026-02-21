@@ -5,8 +5,14 @@ from apps.processes.models import Process
 
 class BaseProcessStrategy:
     """
-    Barcha process turlari uchun umumiy metodlar joyi.
-    Masalan, inputlarni tekshirish, umumiy purity hisoblash, va h.k.
+    IMPORTANT ARCHITECTURE RULE:
+
+    - Business logic is ROLE-BASED.
+    - Never infer behavior from Material fields.
+    - Always use ProcessTemplateItem.role for calculations.
+    - Strategies must be deterministic based on roles.
+
+    This rule is non-negotiable.
     """
 
     def __init__(self, process: Process):

@@ -43,7 +43,7 @@ class ProductAdmin(admin.ModelAdmin):
     ]
     search_fields = ["material__name", "organization__name"]
     list_filter = ["created_at", "material", "organization", "is_composite"]
-    list_editable = ["quantity", "project", "purity", "is_composite", "pure_gold"]
+    list_editable = ["quantity", "organization", "project", "purity", "is_composite", "pure_gold"]
 
     def karat(self, obj):
         return obj.karat

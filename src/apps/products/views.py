@@ -11,7 +11,7 @@ from operator import itemgetter
 
 
 class ProductsViewset(viewsets.ModelViewSet):
-    queryset = Product.objects.select_related("material", "organization", "project").all()
+    queryset = Product.objects.select_related("organization", "project").all()
     serializer_class = ProductReadSerializer
     filterset_fields = ["organization", "is_composite"]
 
@@ -24,7 +24,7 @@ class ProductsViewset(viewsets.ModelViewSet):
     def get_queryset(self):
         user: User = self.request.user
 
-        queryset = super().get_queryset().order_by("material__name")
+        queryset = super().get_queryset().order_by("material")
 
         if not user.is_authenticated:
             return queryset.none()

@@ -1,8 +1,7 @@
 from decimal import Decimal, ROUND_HALF_UP
 from rest_framework import serializers
 
-from apps.materials.models import Material
-from apps.materials.serializers import MaterialSerializer
+from apps.common.choices.materials import MaterialType
 from apps.organizations.serializers import OrganizationSerializer
 from apps.projects.serializers import ProjectSerializer
 from apps.projects.models import Project
@@ -12,13 +11,13 @@ from .models import Product
 
 class ProductWriteSerializer(serializers.ModelSerializer):
     project_id = serializers.PrimaryKeyRelatedField(queryset=Project.objects.all(), source="project", write_only=True, required=False, allow_null=True)
-    material_id = serializers.PrimaryKeyRelatedField(queryset=Material.objects.all(), source="material", write_only=True)
+    material = serializers.ChoiceField(choices=MaterialType.choices)
 
     class Meta:
         model = Product
         fields = (
             "id",
-            "material_id",
+            "material",
             "project_id",
             "quantity",
             "purity",
@@ -49,13 +48,13 @@ class ProductWriteSerializer(serializers.ModelSerializer):
     def save(self, **kwargs):
         product = super().save(**kwargs)
 
-        product.purity = product.material.purity
         # Recalculate or persist pure_gold according to is_composite
         if product.is_composite:
             # keep provided pure_gold, only update purity
             product.save(update_fields=["purity"])
         else:
-            # compute pure_gold from quantity and purity (4 dp)
+            # For specific materials that don't mix with gold or have fixed purity, usage might differ.
+            # But preserving logic for now.
             try:
                 raw = (product.quantity * product.purity) / Decimal("100")
                 product.pure_gold = raw.quantize(Decimal("0.0001"), rounding=ROUND_HALF_UP)
@@ -69,8 +68,8 @@ class ProductWriteSerializer(serializers.ModelSerializer):
 
 class ProductReadSerializer(serializers.ModelSerializer):
     organization = OrganizationSerializer(read_only=True)
-    material = MaterialSerializer(read_only=True)
     project = ProjectSerializer(read_only=True)
+    material = serializers.CharField(source="get_material_display") 
     karat = serializers.SerializerMethodField()
 
     class Meta:
@@ -86,7 +85,6 @@ class ProductReadSerializer(serializers.ModelSerializer):
             "pure_gold",
             "karat",
             "source_description",
-            "project",
             "created_at",
             "updated_at",
         )

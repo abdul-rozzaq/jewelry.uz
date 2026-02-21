@@ -9,7 +9,7 @@ from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 
 from apps.dashboard.serializers import DashboardStatsSerializer
-from apps.processes.models import Process, ProcessStatus
+from apps.processes.models import CoatProcess, GoldDowngradeProcess, ProcessStatus
 from apps.products.models import Product
 from apps.organizations.models import Organization
 from apps.transactions.models import Transaction
@@ -61,15 +61,16 @@ class DashboardStatisticsAPIView(ListAPIView):
         transactions_count = transactions["count"] or 0
         transactions_total = transactions["total_quantity"] or 0
 
-        loses = (
-            Process.objects.filter(status=ProcessStatus.COMPLETED, organization=user.organization)
-            .annotate(
-                lost_quantity=F("total_in") - F("total_out"),
-            )
-            .aggregate(
-                total_lost_quantity=Sum("lost_quantity"),
-            )
-        )
+        # Calculate losses from all process types
+        coat_losses = CoatProcess.objects.filter(status=ProcessStatus.COMPLETED, organization=user.organization)\
+            .annotate(lost=F("total_in") - F("total_out"))\
+            .aggregate(total=Sum("lost"))["total"] or 0
+            
+        downgrade_losses = GoldDowngradeProcess.objects.filter(status=ProcessStatus.COMPLETED, organization=user.organization)\
+            .annotate(lost=F("total_in") - F("total_out"))\
+            .aggregate(total=Sum("lost"))["total"] or 0
+            
+        total_lost_quantity = coat_losses + downgrade_losses
 
         response = {
             "products": {
@@ -88,7 +89,7 @@ class DashboardStatisticsAPIView(ListAPIView):
                 "total": gold_quantity,
             },
             "loses": {
-                "total": loses["total_lost_quantity"] or 0,
+                "total": total_lost_quantity,
             },
         }
 

@@ -31,7 +31,7 @@ DJANGO_APPS = [
 ]
 
 LOCAL_APPS = [
-    "apps.materials",
+    # "apps.materials", # Removed
     "apps.organizations",
     "apps.processes",
     "apps.products",

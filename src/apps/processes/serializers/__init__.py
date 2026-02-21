@@ -1,27 +1,8 @@
-from .process import (
-    ProcessInputGetSerializer,
-    ProcessOutputGetSerializer,
-    GetProcessSerializer,
-    ProcessInputCreateSerializer,
-    ProcessOutputCreateSerializer,
-    CreateProcessSerializer,
-    UpdateProcessSerializer,
-)
-from .process_template import (
-    ProcessTemplateItemSerializer,
-    ProcessTemplateSerializer,
-)
-from .process_type import ProcessTypeSerializer
+from .specific_process import GoldDowngradeProcessSerializer
+from .coat_process import CoatProcessSerializer, GetCoatProcessSerializer
 
 __all__ = [
-    "ProcessInputGetSerializer",
-    "ProcessOutputGetSerializer",
-    "GetProcessSerializer",
-    "ProcessInputCreateSerializer",
-    "ProcessOutputCreateSerializer",
-    "CreateProcessSerializer",
-    "UpdateProcessSerializer",
-    "ProcessTemplateItemSerializer",
-    "ProcessTemplateSerializer",
-    "ProcessTypeSerializer",
+    "CoatProcessSerializer",
+    "GetCoatProcessSerializer",
+    "GoldDowngradeProcessSerializer",
 ]
