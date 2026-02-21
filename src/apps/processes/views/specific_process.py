@@ -1,11 +1,19 @@
-from rest_framework import viewsets
+from rest_framework.response import Response
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
 from apps.processes.models import CoatProcess, GoldDowngradeProcess
-from apps.processes.serializers.specific_process import CoatProcessSerializer, GoldDowngradeProcessSerializer
+from apps.processes.serializers import (
+    CoatProcessSerializer,
+    GoldDowngradeProcessSerializer,
+    GetCoatProcessSerializer,
+)
 
 
-class CoatProcessViewSet(viewsets.ModelViewSet):
+from .base import BaseProcessViewSet
+
+
+class CoatProcessViewSet(BaseProcessViewSet):
     queryset = CoatProcess.objects.all()
     serializer_class = CoatProcessSerializer
     permission_classes = [IsAuthenticated]
@@ -16,8 +24,20 @@ class CoatProcessViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(organization=self.request.user.organization)
 
+    @action(detail=True, methods=["post"])
+    def finish(self, request, pk=None):
+        process = self.get_object()
+        process.finish()
+        return Response(self.get_serializer(process).data)
 
-class GoldDowngradeProcessViewSet(viewsets.ModelViewSet):
+    def get_serializer_class(self):
+        if self.action == "list" or self.action == "retrieve":
+            return GetCoatProcessSerializer
+
+        return self.serializer_class
+
+
+class GoldDowngradeProcessViewSet(BaseProcessViewSet):
     queryset = GoldDowngradeProcess.objects.all()
     serializer_class = GoldDowngradeProcessSerializer
     permission_classes = [IsAuthenticated]
