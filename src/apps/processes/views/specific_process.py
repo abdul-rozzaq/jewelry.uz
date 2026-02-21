@@ -1,6 +1,5 @@
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
 
 from apps.processes.models import CoatProcess, GoldDowngradeProcess
 from apps.processes.serializers import (
@@ -16,7 +15,6 @@ from .base import BaseProcessViewSet
 class CoatProcessViewSet(BaseProcessViewSet):
     queryset = CoatProcess.objects.all()
     serializer_class = CoatProcessSerializer
-    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return CoatProcess.objects.filter(organization=self.request.user.organization).order_by("-created_at")
@@ -40,7 +38,6 @@ class CoatProcessViewSet(BaseProcessViewSet):
 class GoldDowngradeProcessViewSet(BaseProcessViewSet):
     queryset = GoldDowngradeProcess.objects.all()
     serializer_class = GoldDowngradeProcessSerializer
-    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return GoldDowngradeProcess.objects.filter(organization=self.request.user.organization).order_by("-created_at")
