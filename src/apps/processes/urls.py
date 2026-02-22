@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
-from .views.specific_process import CoatProcessViewSet, GoldDowngradeProcessViewSet
+from .views import CoatProcessViewSet, GoldDowngradeProcessViewSet
 
 router = DefaultRouter()
 router.register(r"coat", CoatProcessViewSet, basename="coat-process")

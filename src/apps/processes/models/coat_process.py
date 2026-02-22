@@ -1,4 +1,5 @@
 from decimal import Decimal
+
 from django.db import models
 from django.core.exceptions import ValidationError
 
@@ -50,13 +51,17 @@ class CoatProcess(BaseProcess):
         return self.gold_input - self.scrap_output
 
     def save(self, *args, **kwargs):
-        # self.full_clean()
+        self.full_clean()
 
         # Auto-calculate totals for BaseProcess
-        # if self.gold_input and self.iron_input:
-        #     self.total_in = self.gold_input + self.iron_input
+        if self.gold_input and self.iron_input:
+            self.total_in = self.gold_input + self.iron_input
 
-        # if self.iron_gold_output and self.scrap_output is not None:
-        #     self.total_out = self.iron_gold_output + self.scrap_output
+        if self.iron_gold_output and self.scrap_output is not None:
+            self.total_out = self.iron_gold_output + self.scrap_output
 
         super().save(*args, **kwargs)
+
+        # self.finished_at = self.get_current_timestamp()
+
+        # self.save(update_fields=["status", "finished_at"])
