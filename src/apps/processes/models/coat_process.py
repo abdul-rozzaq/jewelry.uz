@@ -61,7 +61,3 @@ class CoatProcess(BaseProcess):
             self.total_out = self.iron_gold_output + self.scrap_output
 
         super().save(*args, **kwargs)
-
-        # self.finished_at = self.get_current_timestamp()
-
-        # self.save(update_fields=["status", "finished_at"])
